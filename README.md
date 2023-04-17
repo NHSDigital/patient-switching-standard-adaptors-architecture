@@ -2,7 +2,7 @@
 
 This repository is for the purpose of setting up the [GP2GP Adaptor](https://github.com/nhsconnect/integration-adaptor-gp2gp) and [Patient Switching Adaptor](https://github.com/NHSDigital/nia-patient-switching-standard-adaptor) in your cloud architecture. 
 
-As it currently stand we support the following providers...
+As it currently stand we support the following providers:
 
 * AWS
 
