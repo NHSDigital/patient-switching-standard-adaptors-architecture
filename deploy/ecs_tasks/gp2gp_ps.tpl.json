@@ -1,29 +1,29 @@
-{
+[{
     "name": "inbound",
     "image": "${MHS_INBOUND_VERSION}",
-    "cpu": 1,
+    "cpu": 204,
     "portMappings": [
         {
-            "containerPort": 443,
-            "hostPort": "${MHS_INBOUND_PORT}",
+            "containerPort": ${MHS_INBOUND_PORT},
+            "hostPort": ${MHS_INBOUND_PORT},
             "protocol": "tcp"
         },
         {
-            "containerPort": 80,
+            "containerPort": 8079,
             "hostPort": 8079,
             "protocol": "tcp"
         },
         {
-            "containerPort": "${MHS_INBOUND_HEALTHCHECK_SERVER_PORT}",
+            "containerPort": ${MHS_INBOUND_HEALTHCHECK_SERVER_PORT},
             "hostPort": ${MHS_INBOUND_HEALTHCHECK_SERVER_PORT},
             "protocol": "tcp"
         }
     ],
-    "essential": true,
+    "essential": false,
     "environment": [
         {
             "name": "MHS_INBOUND_HEALTHCHECK_SERVER_PORT",
-            "value": ${MHS_INBOUND_HEALTHCHECK_SERVER_PORT}
+            "value": "${MHS_INBOUND_HEALTHCHECK_SERVER_PORT}"
         },
         {
             "name": "MHS_LOG_LEVEL",
@@ -31,7 +31,7 @@
         },
         {
             "name": "MHS_INBOUND_QUEUE_BROKERS",
-            "value": "${MHS_AMQP_BROKER}"
+            "value": "${AWS_MQ_BROKER}"
         },
         {
             "name": "MHS_INBOUND_QUEUE_NAME",
@@ -110,22 +110,23 @@
         "logDriver": "awslogs",
         "options": {
             "awslogs-group": "/ecs/gp2gp_ps/inbound",
-            "awslogs-region": "eu-west-2"
+            "awslogs-region": "eu-west-2",
+            "awslogs-stream-prefix" : "ps-daisychain"
         }
     }
 },
 {
     "name": "outbound",
     "image": "${MHS_OUTBOUND_VERSION}",
-    "cpu": 1,
+    "cpu": 204,
     "portMappings": [
         {
-            "containerPort": 80,
+            "containerPort": ${MHS_OUTBOUND_PORT},
             "hostPort": ${MHS_OUTBOUND_PORT},
             "protocol": "tcp"
         }
     ],
-    "essential": true,
+    "essential": false,
     "environment": [
         {
             "name": "MHS_LOG_LEVEL",
@@ -224,33 +225,34 @@
         "logDriver": "awslogs",
         "options": {
             "awslogs-group": "/ecs/gp2gp_ps/outbound",
-            "awslogs-region": "eu-west-2"
+            "awslogs-region": "eu-west-2",
+            "awslogs-stream-prefix": "ps-daisychain"
         }
     }
 },
 {
     "name": "gpc_facade",
     "image": "${PS_FACADE_VERSION}",
-    "cpu": 1,
+    "cpu": 204,
     "portMappings": [
         {
             "containerPort": 8081,
             "hostPort": 8081
         }
     ],
-    "essential": true,
+    "essential": false,
     "environment": [
         {
             "name": "GPC_FACADE_SERVER_PORT",
-            "value": ${GPC_FACADE_SERVER_PORT}
+            "value": "${GPC_FACADE_SERVER_PORT}"
         },
         {
             "name": "PS_DB_URL",
-            "value": "${PS_DB_URL}"
+            "value": "${AWS_PS_DB_ENDPOINT}"
         },
         {
             "name": "PS_AMQP_BROKER",
-            "value": "${PS_AMQP_BROKER}"
+            "value": "${AWS_MQ_BROKER}"
         },
         {
             "name": "PS_QUEUE_NAME",
@@ -285,37 +287,38 @@
         "logDriver": "awslogs",
         "options": {
             "awslogs-group": "/ecs/gp2gp_ps/outbound",
-            "awslogs-region": "eu-west-2"
+            "awslogs-region": "eu-west-2",
+            "awslogs-stream-prefix" : "ps-daisychain"
         }
     }
 },
 {
     "name": "ps_gp2gp_translator",
     "image": "${PS_TRANSLATOR_VERSION}",
-    "cpu": 1,
+    "cpu": 204,
     "portMappings": [
         {
             "containerPort": 8085,
             "hostPort": 8085
         }
     ],
-    "essential": true,
+    "essential": false,
     "environment": [
         {
             "name": "GP2GP_TRANSLATOR_SERVER_PORT",
-            "value": ${GP2GP_TRANSLATOR_SERVER_PORT}
+            "value": "${GP2GP_TRANSLATOR_SERVER_PORT}"
         },
         {
             "name": "PS_DB_URL",
-            "value": "${PS_DB_URL}"
+            "value": "${AWS_PS_DB_ENDPOINT}"
         },
         {
             "name": "PS_AMQP_BROKER",
-            "value": "${PS_AMQP_BROKER}"
+            "value": "${AWS_MQ_BROKER}"
         },
         {
             "name": "MHS_AMQP_BROKER",
-            "value": "${MHS_AMQP_BROKER}"
+            "value": "${AWS_MQ_BROKER}"
         },
         {
             "name": "PS_QUEUE_NAME",
@@ -351,7 +354,7 @@
         },
         {
             "name": "STORAGE_REGION",
-            "value": "${STORAGE_REGION}"
+            "value": "${AWS_REGION}"
         },
         {
             "name": "STORAGE_CONTAINER_NAME",
@@ -371,7 +374,7 @@
         },
         {
             "name": "GP2GP_AMQP_BROKERS",
-            "value": "${GP2GP_AMQP_BROKERS}"
+            "value": "${AWS_MQ_BROKER}"
         }
     ],
     "mountPoints": [],
@@ -414,97 +417,26 @@
         "logDriver": "awslogs",
         "options": {
             "awslogs-group": "/ecs/gp2gp_ps/ps_gp2gp_translator",
-            "awslogs-region": "eu-west-2"
-        }
-    }
-},
-{
-    "name": "ps_db",
-    "image": "${POSTGRES_VERSION}",
-    "cpu": 1,
-    "portMappings": [
-        {
-            "containerPort": 5432,
-            "hostPort": ${PS_DB_PORT}
-        }
-    ],
-    "essential": true,
-    "environment": [],
-    "mountPoints": [],
-    "volumesFrom": [],
-    "secrets": [
-        {
-            "name": "POSTGRES_PASSWORD",
-            "valueFrom": "${POSTGRES_PASSWORD}"
-        },
-        {
-            "name": "PS_DB_OWNER_NAME",
-            "valueFrom": "${PS_DB_OWNER_NAME}"
-        }
-    ],
-    "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-            "awslogs-group": "/ecs/gp2gp_ps/ps_gp2gp_translator",
-            "awslogs-region": "eu-west-2"
-        }
-    }
-},
-{
-    "name": "db_migration",
-    "image": "${PS_DB_MIGRATION_VERSION}",
-    "cpu": 1,
-    "portMappings": [],
-    "essential": true,
-    "environment": [
-        {
-            "name": "PS_DB_URL",
-            "value": "${PS_DB_URL}"
-        }
-    ],
-    "mountPoints": [],
-    "volumesFrom": [],
-    "secrets": [
-        {
-            "name": "POSTGRES_PASSWORD",
-            "valueFrom": "${POSTGRES_PASSWORD}"
-        },
-        {
-            "name": "PS_DB_OWNER_NAME",
-            "valueFrom": "${PS_DB_OWNER_NAME}"
-        },
-        {
-            "name": "GPC_FACADE_USER_DB_PASSWORD",
-            "valueFrom": "${GPC_FACADE_USER_DB_PASSWORD}"
-        },
-        {
-            "name": "GP2GP_TRANSLATOR_USER_DB_PASSWORD",
-            "valueFrom": "${GP2GP_TRANSLATOR_USER_DB_PASSWORD}"
-        }
-    ],
-    "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-            "awslogs-group": "/ecs/gp2gp_ps/ps_gp2gp_translator",
-            "awslogs-region": "eu-west-2"
+            "awslogs-region": "eu-west-2",
+            "awslogs-stream-prefix" : "ps-daisychain"
         }
     }
 },
 {
     "name": "gp2gp",
     "image": "${GP2GP_ADAPTOR_VERSION}",
-    "cpu": 1,
+    "cpu": 204,
     "portMappings": [
         {
-            "containerPort": 8183,
+            "containerPort": ${GP2GP_SERVER_PORT},
             "hostPort": ${GP2GP_SERVER_PORT}
         }
     ],
-    "essential": true,
+    "essential": false,
     "environment": [
         {
             "name": "GP2GP_SERVER_PORT",
-            "value": ${GP2GP_SERVER_PORT}
+            "value": "${GP2GP_SERVER_PORT}"
         },
         {
             "name": "GP2GP_LOGGING_LEVEL",
@@ -512,7 +444,7 @@
         },
         {
             "name": "GP2GP_AMQP_BROKERS",
-            "value": "${GP2GP_AMQP_BROKERS}"
+            "value": "${AWS_MQ_BROKER}"
         },
         {
             "name": "GP2GP_AMQP_MAX_REDELIVERIES",
@@ -525,10 +457,6 @@
         {
             "name": "GP2GP_MONGO_DATABASE_NAME",
             "value": "${GP2GP_MONGO_DATABASE_NAME}"
-        },
-        {
-            "name": "GP2GP_MONGO_TTL",
-            "value": "${GP2GP_MONGO_TTL}"
         },
         {
             "name": "GP2GP_COSMOS_DB_ENABLED",
@@ -607,10 +535,6 @@
             "valueFrom": "${GP2GP_AMQP_PASSWORD}"
         },
         {
-            "name": "AZURE_STORAGE_CONNECTION_STRING",
-            "valueFrom": "${AZURE_STORAGE_CONNECTION_STRING}"
-        },
-        {
             "name": "AWS_ACCESS_KEY_ID",
             "valueFrom": "${AWS_ACCESS_KEY_ID}"
         },
@@ -627,14 +551,15 @@
         "logDriver": "awslogs",
         "options": {
             "awslogs-group": "/ecs/gp2gp_ps/gp2gp",
-            "awslogs-region": "eu-west-2"
+            "awslogs-region": "eu-west-2",
+            "awslogs-stream-prefix" : "ps-daisychain"
         }
     }
 },
 {
     "name": "mongodb",
-    "image": "${GP2GP_ADAPTOR_VERSION}",
-    "cpu": 1,
+    "image": "${MONGODB_VERSION}",
+    "cpu": 204,
     "portMappings": [
         {
             "containerPort": 27017,
@@ -650,14 +575,15 @@
         "logDriver": "awslogs",
         "options": {
             "awslogs-group": "/ecs/gp2gp_ps/mongodb",
-            "awslogs-region": "eu-west-2"
+            "awslogs-region": "eu-west-2",
+            "awslogs-stream-prefix" : "ps-daisychain"
         }
     }
 },
 {
     "name": "gpcc",
     "image": "${GPCC_ADAPTOR_VERSION}",
-    "cpu": 1,
+    "cpu": 204,
     "portMappings": [
         {
             "containerPort": 8090,
@@ -672,7 +598,7 @@
         },
         {
             "name": "GPC_CONSUMER_SERVER_PORT",
-            "value": ${GPC_CONSUMER_SERVER_PORT}
+            "value": "${GPC_CONSUMER_SERVER_PORT}"
         },
         {
             "name": "GPC_CONSUMER_SPINE_CLIENT_CERT",
@@ -726,159 +652,8 @@
         "logDriver": "awslogs",
         "options": {
             "awslogs-group": "/ecs/gp2gp_ps/mongodb",
-            "awslogs-region": "eu-west-2"
+            "awslogs-region": "eu-west-2",
+            "awslogs-stream-prefix" : "ps-daisychain"
         }
     }
-},
-{
-    "name": "gpcc",
-    "image": "${GPCC_ADAPTOR_VERSION}",
-    "cpu": 1,
-    "portMappings": [
-        {
-            "containerPort": 8090,
-            "hostPort": 8090
-        }
-    ],
-    "essential": true,
-    "environment": [
-        {
-            "name": "GPC_CONSUMER_LOGGING_LEVEL",
-            "value": "${GPC_CONSUMER_LOGGING_LEVEL}"
-        },
-        {
-            "name": "GPC_CONSUMER_SERVER_PORT",
-            "value": ${GPC_CONSUMER_SERVER_PORT}
-        },
-        {
-            "name": "GPC_CONSUMER_SPINE_CLIENT_CERT",
-            "value": "${GPC_CONSUMER_SPINE_CLIENT_CERT}"
-        },
-        {
-            "name": "GPC_CONSUMER_SPINE_CLIENT_KEY",
-            "value": "${GPC_CONSUMER_SPINE_CLIENT_KEY}"
-        },
-        {
-            "name": "GPC_CONSUMER_SPINE_ROOT_CA_CERT",
-            "value": "${GPC_CONSUMER_SPINE_ROOT_CA_CERT}"
-        },
-        {
-            "name": "GPC_CONSUMER_SPINE_SUB_CA_CERT",
-            "value": "${GPC_CONSUMER_SPINE_SUB_CA_CERT}"
-        },
-        {
-            "name": "GPC_CONSUMER_SEARCH_DOCUMENTS_PATH",
-            "value": "${GPC_CONSUMER_SEARCH_DOCUMENTS_PATH}"
-        },
-        {
-            "name": "GPC_CONSUMER_GPC_STRUCTURED_PATH",
-            "value": "${GPC_CONSUMER_GPC_STRUCTURED_PATH}"
-        },
-        {
-            "name": "GPC_CONSUMER_GPC_GET_PATIENT_PATH",
-            "value": "${GPC_CONSUMER_GPC_GET_PATIENT_PATH}"
-        },
-        {
-            "name": "GPC_CONSUMER_GPC_GET_DOCUMENT_PATH",
-            "value": "${GPC_CONSUMER_GPC_GET_DOCUMENT_PATH}"
-        },
-        {
-            "name": "GPC_CONSUMER_SDS_URL",
-            "value": "${GPC_CONSUMER_SDS_URL}"
-        },
-        {
-            "name": "GPC_CONSUMER_SDS_APIKEY",
-            "value": "${GPC_CONSUMER_SDS_APIKEY}"
-        },
-        {
-            "name": "GPC_CONSUMER_SSP_URL",
-            "value": "${GPC_CONSUMER_SSP_URL}"
-        }
-    ],
-    "mountPoints": [],
-    "volumesFrom": [],
-    "secrets": [],
-    "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-            "awslogs-group": "/ecs/gp2gp_ps/gpcc",
-            "awslogs-region": "eu-west-2"
-        }
-    }
-},
-{
-    "name": "wiremock",
-    "image": "${GPCC_ADAPTOR_VERSION}",
-    "cpu": 1,
-    "portMappings": [
-        {
-            "containerPort": 8090,
-            "hostPort": 8090
-        }
-    ],
-    "essential": true,
-    "environment": [
-        {
-            "name": "GPC_CONSUMER_LOGGING_LEVEL",
-            "value": "${GPC_CONSUMER_LOGGING_LEVEL}"
-        },
-        {
-            "name": "GPC_CONSUMER_SERVER_PORT",
-            "value": ${GPC_CONSUMER_SERVER_PORT}
-        },
-        {
-            "name": "GPC_CONSUMER_SPINE_CLIENT_CERT",
-            "value": "${GPC_CONSUMER_SPINE_CLIENT_CERT}"
-        },
-        {
-            "name": "GPC_CONSUMER_SPINE_CLIENT_KEY",
-            "value": "${GPC_CONSUMER_SPINE_CLIENT_KEY}"
-        },
-        {
-            "name": "GPC_CONSUMER_SPINE_ROOT_CA_CERT",
-            "value": "${GPC_CONSUMER_SPINE_ROOT_CA_CERT}"
-        },
-        {
-            "name": "GPC_CONSUMER_SPINE_SUB_CA_CERT",
-            "value": "${GPC_CONSUMER_SPINE_SUB_CA_CERT}"
-        },
-        {
-            "name": "GPC_CONSUMER_SEARCH_DOCUMENTS_PATH",
-            "value": "${GPC_CONSUMER_SEARCH_DOCUMENTS_PATH}"
-        },
-        {
-            "name": "GPC_CONSUMER_GPC_STRUCTURED_PATH",
-            "value": "${GPC_CONSUMER_GPC_STRUCTURED_PATH}"
-        },
-        {
-            "name": "GPC_CONSUMER_GPC_GET_PATIENT_PATH",
-            "value": "${GPC_CONSUMER_GPC_GET_PATIENT_PATH}"
-        },
-        {
-            "name": "GPC_CONSUMER_GPC_GET_DOCUMENT_PATH",
-            "value": "${GPC_CONSUMER_GPC_GET_DOCUMENT_PATH}"
-        },
-        {
-            "name": "GPC_CONSUMER_SDS_URL",
-            "value": "${GPC_CONSUMER_SDS_URL}"
-        },
-        {
-            "name": "GPC_CONSUMER_SDS_APIKEY",
-            "value": "${GPC_CONSUMER_SDS_APIKEY}"
-        },
-        {
-            "name": "GPC_CONSUMER_SSP_URL",
-            "value": "${GPC_CONSUMER_SSP_URL}"
-        }
-    ],
-    "mountPoints": [],
-    "volumesFrom": [],
-    "secrets": [],
-    "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-            "awslogs-group": "/ecs/gp2gp_ps/gpcc",
-            "awslogs-region": "eu-west-2"
-        }
-    }
-}
+}]

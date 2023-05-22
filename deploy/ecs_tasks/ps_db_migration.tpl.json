@@ -1,0 +1,47 @@
+[{
+    "name": "db_migration",
+    "image": "${PS_DB_MIGRATION_VERSION}",
+    "cpu": 1024,
+    "portMappings": [
+        {
+            "containerPort": 5432,
+            "hostPort": 5432
+        }
+    ],
+    "essential": true,
+    "environment": [
+        {
+            "name": "PS_DB_URL",
+            "value": "${AWS_PS_DB_ENDPOINT}"
+        }
+    ],
+    "mountPoints": [],
+    "volumesFrom": [],
+    "secrets": [
+        {
+            "name": "POSTGRES_PASSWORD",
+            "valueFrom": "${POSTGRES_PASSWORD}"
+        },
+        {
+            "name": "PS_DB_OWNER_NAME",
+            "valueFrom": "${PS_DB_OWNER_NAME}"
+        },
+        {
+            "name": "GPC_FACADE_USER_DB_PASSWORD",
+            "valueFrom": "${GPC_FACADE_USER_DB_PASSWORD}"
+        },
+        {
+            "name": "GP2GP_TRANSLATOR_USER_DB_PASSWORD",
+            "valueFrom": "${GP2GP_TRANSLATOR_USER_DB_PASSWORD}"
+        }
+    ],
+    "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-group": "/ecs/gp2gp_ps/ps_gp2gp_translator",
+            "awslogs-region": "eu-west-2",
+            "awslogs-stream-prefix" : "ps-daisychain"
+        }
+    }
+}
+]
