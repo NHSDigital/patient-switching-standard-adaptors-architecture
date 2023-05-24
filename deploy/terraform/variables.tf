@@ -1,16 +1,6 @@
 ## Application Secrets ##
 // we might want to handle these differently in tf
 
-variable "AWS_ACCESS_KEY_ID" {
-        type=string
-        sensitive=true
-        default = null
-}
-variable "AWS_SECRET_ACCESS_KEY" {
-        type=string
-        sensitive=true
-        default = null
-}
 variable "AZURE_STORAGE_CONNECTION_STRING" {
         type=string
         sensitive=true

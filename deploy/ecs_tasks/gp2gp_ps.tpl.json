@@ -96,14 +96,6 @@
         {
             "name": "MHS_SECRET_INBOUND_QUEUE_PASSWORD",
             "valueFrom": "${MHS_AMQP_PASSWORD}"
-        },
-        {
-            "name": "AWS_ACCESS_KEY_ID",
-            "valueFrom": "${AWS_ACCESS_KEY_ID}"
-        },
-        {
-            "name": "AWS_SECRET_ACCESS_KEY",
-            "valueFrom": "${AWS_SECRET_ACCESS_KEY}"
         }
     ],
     "logConfiguration": {
@@ -211,14 +203,6 @@
         {
             "name": "MHS_SECRET_CA_CERTS",
             "valueFrom": "${MHS_SECRET_CA_CERTS}"
-        },
-        {
-            "name": "AWS_ACCESS_KEY_ID",
-            "valueFrom": "${AWS_ACCESS_KEY_ID}"
-        },
-        {
-            "name": "AWS_SECRET_ACCESS_KEY",
-            "valueFrom": "${AWS_SECRET_ACCESS_KEY}"
         }
     ],
     "logConfiguration": {
@@ -533,14 +517,6 @@
         {
             "name": "GP2GP_AMQP_PASSWORD",
             "valueFrom": "${GP2GP_AMQP_PASSWORD}"
-        },
-        {
-            "name": "AWS_ACCESS_KEY_ID",
-            "valueFrom": "${AWS_ACCESS_KEY_ID}"
-        },
-        {
-            "name": "AWS_SECRET_ACCESS_KEY",
-            "valueFrom": "${AWS_SECRET_ACCESS_KEY}"
         },
         {
             "name": "GP2GP_SSL_TRUST_STORE_PASSWORD",

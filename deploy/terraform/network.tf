@@ -261,15 +261,3 @@ resource "aws_lb_listener" "inbound" {
 resource "aws_ecs_cluster" "nia_gp2gp_cluster" {
   name = "gp2gp-ps-chain"
 }
-
-resource "aws_ssm_parameter" "AWS_ACCESS_KEY_ID" {
-  name        = "/gp2gp_ps_daisychain/AWS_ACCESS_KEY_ID"
-  type        = "SecureString"
-  value       = var.AWS_ACCESS_KEY_ID
-}
-
-resource "aws_ssm_parameter" "AWS_SECRET_ACCESS_KEY" {
-  name        = "/gp2gp_ps_daisychain/AWS_SECRET_ACCESS_KEY"
-  type        = "SecureString"
-  value       = var.AWS_SECRET_ACCESS_KEY
-}

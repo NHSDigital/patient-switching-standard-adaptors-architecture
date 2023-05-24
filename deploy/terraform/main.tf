@@ -1,6 +1,5 @@
 provider "aws" {
   region  = "eu-west-2"
-
 }
 
 data "aws_availability_zones" "available" {
@@ -13,8 +12,6 @@ data "template_file" "gp2gp_ps_task_template" {
 ## Secrets ##
 // Load these from param store
 
-    AWS_ACCESS_KEY_ID = aws_ssm_parameter.AWS_ACCESS_KEY_ID.arn
-    AWS_SECRET_ACCESS_KEY = aws_ssm_parameter.AWS_SECRET_ACCESS_KEY.arn
 #    AZURE_STORAGE_CONNECTION_STRING = aws_ssm_parameter.AZURE_STORAGE_CONNECTION_STRING.arn
     GP2GP_AMQP_PASSWORD = aws_ssm_parameter.GP2GP_AMQP_PASSWORD.arn
     GP2GP_AMQP_USERNAME = aws_ssm_parameter.GP2GP_AMQP_USERNAME.arn
@@ -154,6 +151,7 @@ resource "aws_ecs_cluster" "gp2gp_ps" {
 
 resource "aws_ecs_task_definition" "gp2gp_ps_task" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.adaptor_execution.arn
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.cpu
   memory                   = var.memory

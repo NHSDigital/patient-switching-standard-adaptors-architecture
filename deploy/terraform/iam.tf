@@ -1,3 +1,52 @@
+resource "aws_iam_role" "adaptor_execution" {
+  name = "gp2gp_adaptor_execution"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "adaptor_execution_dyanmodb" {
+  role = aws_iam_role.adaptor_execution.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "dynamodb:*"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "adaptor_execution_s3" {
+  role = aws_iam_role.adaptor_execution.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:*"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
+
 resource "aws_iam_role" "ecs_task_execution_role" {
   name = "gp2gp_ps_ecs_execution"
   assume_role_policy = jsonencode({
