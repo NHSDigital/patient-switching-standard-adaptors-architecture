@@ -129,6 +129,7 @@ data "template_file" "gp2gp_ps_task_template" {
     AWS_MQ_BROKER = replace(aws_mq_broker.gp2gp_ps_broker.instances.0.endpoints.1, "amqp+ssl", "amqps")
     AWS_PS_DB_ENDPOINT = "jdbc:postgresql://${aws_db_instance.ps_db.endpoint}"
 #    AWS_PS_DB_PASSWORD_SECRET = aws_db_instance.ps_db.master_user_secret.0.secret_arn
+    MOCK_SPINE_VERSION = var.MOCK_SPINE_VERSION
   }
     )
 }

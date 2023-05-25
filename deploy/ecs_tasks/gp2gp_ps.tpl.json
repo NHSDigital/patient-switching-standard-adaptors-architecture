@@ -632,4 +632,47 @@
             "awslogs-stream-prefix" : "ps-daisychain"
         }
     }
+},{
+    "name": "mock-spine",
+    "image": "${MOCK_SPINE_VERSION}",
+    "cpu": 204,
+    "portMappings": [
+        {
+            "containerPort": 8086,
+            "hostPort": 8086,
+            "protocol": "tcp"
+        },
+        {
+            "containerPort": 8443,
+            "hostPort": 8443,
+            "protocol": "tcp"
+        }
+    ],
+    "essential": true,
+    "environment": [
+        {
+            "name": "PS_DB_URL",
+            "value": "${AWS_PS_DB_ENDPOINT}"
+        },
+        {
+            "name": "MOCK_SPINE_MHS_OUTBOUND_LOG_LEVEL",
+            "value": "${MHS_LOG_LEVEL}"
+        }
+    ],
+    "mountPoints": [],
+    "volumesFrom": [],
+    "secrets": [
+        {
+            "name": "GP2GP_TRANSLATOR_USER_DB_PASSWORD",
+            "valueFrom": "${GP2GP_TRANSLATOR_USER_DB_PASSWORD}"
+        }
+    ],
+    "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-group": "/ecs/gp2gp_ps/mock_spine",
+            "awslogs-region": "eu-west-2",
+            "awslogs-stream-prefix" : "ps-daisychain"
+        }
+    }
 }]

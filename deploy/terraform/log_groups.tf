@@ -26,6 +26,10 @@ resource "aws_cloudwatch_log_group" "activemq_logs" {
   name = "/ecs/gp2gp_ps/activemq"
 }
 
+resource "aws_cloudwatch_log_group" "mock_spine_logs" {
+  name = "/ecs/gp2gp_ps/mock_spine"
+}
+
 resource "aws_cloudwatch_log_stream" "inbound_stream" {
   name           = "ps-daisychain"
   log_group_name = aws_cloudwatch_log_group.inbound_logs.name
