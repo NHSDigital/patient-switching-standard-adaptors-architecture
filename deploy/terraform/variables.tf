@@ -371,3 +371,13 @@ variable "MOCK_SPINE_VERSION" {
         type = string
         default = null
 }
+
+variable "MQ_USERNAME" {
+        type = string
+        default = null
+}
+
+variable "MQ_PASSWORD" {
+        type = string
+        default = null
+}
