@@ -53,8 +53,8 @@ resource "aws_mq_broker" "gp2gp_ps_broker" {
   }
 
   user {
-    username = "admin"
-    password = "queueadminpassword"
+    username = var.MQ_USERNAME
+    password = var.MQ_PASSWORD
     console_access = true
   }
 }
