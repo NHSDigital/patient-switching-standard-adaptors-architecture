@@ -156,12 +156,11 @@ resource "aws_security_group" "nia_gp2gp_mq" {
   vpc_id = aws_vpc.nia_gp2gp_vpc.id
 
   ingress {
-    description     = "Allow HTTP traffic from only the pubic sg"
+    description     = "Allow traffic to message queue"
     from_port       = "5671"
     protocol        = "tcp"
     to_port         = "5671"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"] //todo restrict traffic to mq properly
+    security_groups = [aws_security_group.nia_gp2gp_dmz.id]
   }
 
   egress {
@@ -185,12 +184,11 @@ resource "aws_security_group" "ps_db_migration" {
   vpc_id = aws_vpc.nia_gp2gp_vpc.id
 
   ingress {
-    description     = "Allow HTTP traffic from only the pubic sg"
+    description     = "Allow PS DB traffic"
     from_port       = "5432"
     protocol        = "tcp"
     to_port         = "5432"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"] //todo restrict traffic to mq properly
+    security_groups = [aws_security_group.nia_gp2gp_dmz.id]
   }
 
   egress {
