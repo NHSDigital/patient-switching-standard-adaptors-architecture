@@ -77,7 +77,7 @@ resource "aws_iam_role_policy" "ecs_task_execution_role_policy" {
           "ssm:GetParameter"
         ]
         Effect   = "Allow"
-        Resource = "arn:aws:ssm:eu-west-2:067756640211:parameter/gp2gp_ps_daisychain/*"
+        Resource = "*"
       },
     ]
   })

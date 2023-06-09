@@ -174,7 +174,6 @@ resource "aws_ecs_service" "gp2gp_ps" {
   cluster         = aws_ecs_cluster.gp2gp_ps.arn
   task_definition = aws_ecs_task_definition.gp2gp_ps_task.arn
   desired_count   = 1
-  #iam_role        = aws_iam_role.ecs_task_execution_role.arn
   depends_on      = [aws_lb_listener.mhs_inbound, aws_iam_role.ecs_task_execution_role, aws_db_instance.ps_db]
   launch_type     = "FARGATE"
 
