@@ -39,12 +39,12 @@ data "template_file" "gp2gp_ps_task_template" {
     GP2GP_AMQP_BROKERS = var.GP2GP_AMQP_BROKERS
     GP2GP_AMQP_MAX_REDELIVERIES = var.GP2GP_AMQP_MAX_REDELIVERIES
     GP2GP_COSMOS_DB_ENABLED = var.GP2GP_COSMOS_DB_ENABLED
-    GP2GP_GPC_DOCUMENTS_FHIR_BASE = var.GP2GP_GPC_DOCUMENTS_FHIR_BASE
-    GP2GP_GPC_GET_TEST_URL = var.GP2GP_GPC_GET_TEST_URL
+#    GP2GP_GPC_DOCUMENTS_FHIR_BASE = var.GP2GP_GPC_DOCUMENTS_FHIR_BASE
+#    GP2GP_GPC_GET_TEST_URL = var.GP2GP_GPC_GET_TEST_URL
     GP2GP_GPC_GET_URL = var.GP2GP_GPC_GET_URL
-    GP2GP_GPC_OVERRIDE_FROM_ASID = var.GP2GP_GPC_OVERRIDE_FROM_ASID
-    GP2GP_GPC_OVERRIDE_NHS_NUMBER = var.GP2GP_GPC_OVERRIDE_NHS_NUMBER
-    GP2GP_GPC_OVERRIDE_TO_ASID = var.GP2GP_GPC_OVERRIDE_TO_ASID
+#    GP2GP_GPC_OVERRIDE_FROM_ASID = var.GP2GP_GPC_OVERRIDE_FROM_ASID
+##    GP2GP_GPC_OVERRIDE_NHS_NUMBER = var.GP2GP_GPC_OVERRIDE_NHS_NUMBER
+#    GP2GP_GPC_OVERRIDE_TO_ASID = var.GP2GP_GPC_OVERRIDE_TO_ASID
     GP2GP_GPC_STRUCTURED_FHIR_BASE = var.GP2GP_GPC_STRUCTURED_FHIR_BASE
     GP2GP_LARGE_ATTACHMENT_THRESHOLD = var.GP2GP_LARGE_ATTACHMENT_THRESHOLD
     GP2GP_LARGE_EHR_EXTRACT_THRESHOLD = var.GP2GP_LARGE_EHR_EXTRACT_THRESHOLD
@@ -55,24 +55,24 @@ data "template_file" "gp2gp_ps_task_template" {
     GP2GP_MONGO_TTL = var.GP2GP_MONGO_TTL
     GP2GP_MONGO_URI = var.GP2GP_MONGO_URI
     GP2GP_SERVER_PORT = var.GP2GP_SERVER_PORT
-    GP2GP_SSL_TRUST_STORE_URL = var.GP2GP_SSL_TRUST_STORE_URL
+#    GP2GP_SSL_TRUST_STORE_URL = var.GP2GP_SSL_TRUST_STORE_URL
     GP2GP_STORAGE_CONTAINER_NAME = var.GP2GP_STORAGE_CONTAINER_NAME
     GP2GP_STORAGE_TYPE = var.GP2GP_STORAGE_TYPE
     GP2GP_TRANSLATOR_SERVER_PORT = var.GP2GP_TRANSLATOR_SERVER_PORT
-    GPC_CONSUMER_GPC_GET_DOCUMENT_PATH = var.GPC_CONSUMER_GPC_GET_DOCUMENT_PATH
-    GPC_CONSUMER_GPC_GET_PATIENT_PATH = var.GPC_CONSUMER_GPC_GET_PATIENT_PATH
-    GPC_CONSUMER_GPC_STRUCTURED_PATH = var.GPC_CONSUMER_GPC_STRUCTURED_PATH
+#    GPC_CONSUMER_GPC_GET_DOCUMENT_PATH = var.GPC_CONSUMER_GPC_GET_DOCUMENT_PATH
+#    GPC_CONSUMER_GPC_GET_PATIENT_PATH = var.GPC_CONSUMER_GPC_GET_PATIENT_PATH
+#    GPC_CONSUMER_GPC_STRUCTURED_PATH = var.GPC_CONSUMER_GPC_STRUCTURED_PATH
     GPC_CONSUMER_LOGGING_LEVEL = var.GPC_CONSUMER_LOGGING_LEVEL
     GPC_CONSUMER_SDS_APIKEY = var.GPC_CONSUMER_SDS_APIKEY
     GPC_CONSUMER_SDS_URL = var.GPC_CONSUMER_SDS_URL
-    GPC_CONSUMER_SEARCH_DOCUMENTS_PATH = var.GPC_CONSUMER_SEARCH_DOCUMENTS_PATH
+#    GPC_CONSUMER_SEARCH_DOCUMENTS_PATH = var.GPC_CONSUMER_SEARCH_DOCUMENTS_PATH
     GPC_CONSUMER_SERVER_PORT = var.GPC_CONSUMER_SERVER_PORT
-    GPC_CONSUMER_SPINE_CLIENT_CERT = var.GPC_CONSUMER_SPINE_CLIENT_CERT
-    GPC_CONSUMER_SPINE_CLIENT_KEY = var.GPC_CONSUMER_SPINE_CLIENT_KEY
-    GPC_CONSUMER_SPINE_ROOT_CA_CERT = var.GPC_CONSUMER_SPINE_ROOT_CA_CERT
-    GPC_CONSUMER_SPINE_SUB_CA_CERT = var.GPC_CONSUMER_SPINE_SUB_CA_CERT
-    GPC_CONSUMER_SSP_URL = var.GPC_CONSUMER_SSP_URL
-    GPC_FACADE_SERVER_PORT = var.GPC_FACADE_SERVER_PORT
+#    GPC_CONSUMER_SPINE_CLIENT_CERT = var.GPC_CONSUMER_SPINE_CLIENT_CERT
+#    GPC_CONSUMER_SPINE_CLIENT_KEY = var.GPC_CONSUMER_SPINE_CLIENT_KEY
+#    GPC_CONSUMER_SPINE_ROOT_CA_CERT = var.GPC_CONSUMER_SPINE_ROOT_CA_CERT
+#    GPC_CONSUMER_SPINE_SUB_CA_CERT = var.GPC_CONSUMER_SPINE_SUB_CA_CERT
+#    GPC_CONSUMER_SSP_URL = var.GPC_CONSUMER_SSP_URL
+    GPC_FACADE_SERVER_PORT = var.FACADE_SERVER_PORT
     MAX_RESYNC_RETRIES = var.MAX_RESYNC_RETRIES
     MHS_AMQP_BROKER = var.MHS_AMQP_BROKER
     MHS_AMQP_MAX_REDELIVERIES = var.MHS_AMQP_MAX_REDELIVERIES
@@ -114,13 +114,9 @@ data "template_file" "gp2gp_ps_task_template" {
     MHS_OUTBOUND_VERSION = var.MHS_OUTBOUND_VERSION
     PS_TRANSLATOR_VERSION = var.PS_TRANSLATOR_VERSION
     PS_FACADE_VERSION = var.PS_FACADE_VERSION
-    POSTGRES_VERSION = var.POSTGRES_VERSION
     PS_DB_MIGRATION_VERSION = var.PS_DB_MIGRATION_VERSION
     GP2GP_ADAPTOR_VERSION = var.GP2GP_ADAPTOR_VERSION
     GPCC_ADAPTOR_VERSION = var.GPCC_ADAPTOR_VERSION
-    REDIS_VERSION = var.REDIS_VERSION
-    ACTIVEMQ_VERSION = var.ACTIVEMQ_VERSION
-    DYNAMODB_VERSION = var.DYNAMODB_VERSION
     MONGODB_VERSION = var.MONGODB_VERSION
     MHS_INBOUND_PORT = var.MHS_INBOUND_PORT
     MHS_OUTBOUND_PORT = var.MHS_OUTBOUND_PORT
@@ -130,6 +126,8 @@ data "template_file" "gp2gp_ps_task_template" {
     AWS_PS_DB_ENDPOINT = "jdbc:postgresql://${aws_db_instance.ps_db.endpoint}"
 #    AWS_PS_DB_PASSWORD_SECRET = aws_db_instance.ps_db.master_user_secret.0.secret_arn
     MOCK_SPINE_VERSION = var.MOCK_SPINE_VERSION
+    WIREMOCK_VERSION = var.WIREMOCK_VERSION
+    WIREMOCK_PORT = var.WIREMOCK_PORT
   }
     )
 }
@@ -177,8 +175,7 @@ resource "aws_ecs_service" "gp2gp_ps" {
   task_definition = aws_ecs_task_definition.gp2gp_ps_task.arn
   desired_count   = 1
   #iam_role        = aws_iam_role.ecs_task_execution_role.arn
-  #depends_on      = [aws_iam_role.ecs_task_execution_role]
-  depends_on      = [aws_lb_listener.inbound, aws_iam_role.ecs_task_execution_role]
+  depends_on      = [aws_lb_listener.mhs_inbound, aws_iam_role.ecs_task_execution_role, aws_db_instance.ps_db]
   launch_type     = "FARGATE"
 
 
@@ -190,9 +187,21 @@ resource "aws_ecs_service" "gp2gp_ps" {
 
   #Not sure if set up correctly - currently only using for a Health Check (should probably be using Inbound)
   load_balancer {
-    target_group_arn = aws_lb_target_group.nia_gp2gp_target_group.arn
+    target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_facade.arn
     container_name   = "gpc_facade"
-    container_port   = var.GPC_FACADE_SERVER_PORT
+    container_port   = var.FACADE_SERVER_PORT
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_inbound.arn
+    container_name   = "inbound"
+    container_port   = var.MHS_INBOUND_PORT
+  }
+
+  load_balancer {
+    target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_spine.arn
+    container_name   = "mock-spine"
+    container_port   = var.MOCK_SPINE_PORT
   }
 }
 
@@ -201,7 +210,7 @@ resource "aws_ecs_service" "ps_db_migration" {
   cluster         = aws_ecs_cluster.gp2gp_ps.arn
   task_definition = aws_ecs_task_definition.gp2gp_ps_db_migration.arn
   desired_count   = 1
-  depends_on      = [aws_iam_role.ecs_task_execution_role]
+  depends_on      = [aws_iam_role.ecs_task_execution_role, aws_db_instance.ps_db]
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -210,4 +219,5 @@ resource "aws_ecs_service" "ps_db_migration" {
     security_groups = [aws_security_group.ps_db_migration.id]
   }
 }
+
 

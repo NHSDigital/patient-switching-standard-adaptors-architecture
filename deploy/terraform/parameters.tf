@@ -44,17 +44,17 @@ resource "aws_ssm_parameter" "MHS_AMQP_USERNAME" {
 resource "aws_ssm_parameter" "MHS_SECRET_CA_CERTS" {
   name        = "/gp2gp_ps_daisychain/MHS_SECRET_CA_CERTS"
   type        = "SecureString"
-  value       = var.MHS_SECRET_CA_CERTS
+  value       = trimspace(var.MHS_SECRET_CA_CERTS)
 }
 resource "aws_ssm_parameter" "MHS_SECRET_CLIENT_CERT" {
   name        = "/gp2gp_ps_daisychain/MHS_SECRET_CLIENT_CERT"
   type        = "SecureString"
-  value       = var.MHS_SECRET_CLIENT_CERT
+  value       = trimspace(var.MHS_SECRET_CLIENT_CERT)
 }
 resource "aws_ssm_parameter" "MHS_SECRET_CLIENT_KEY" {
   name        = "/gp2gp_ps_daisychain/MHS_SECRET_CLIENT_KEY"
   type        = "SecureString"
-  value       = var.MHS_SECRET_CLIENT_KEY
+  value       = trimspace(var.MHS_SECRET_CLIENT_KEY)
 }
 resource "aws_ssm_parameter" "MHS_SECRET_INBOUND_QUEUE_PASSWORD" {
   name        = "/gp2gp_ps_daisychain/MHS_SECRET_INBOUND_QUEUE_PASSWORD"

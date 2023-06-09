@@ -6,10 +6,10 @@ resource "aws_db_subnet_group" "ps_db_subnet_group" {
 resource "aws_db_instance" "ps_db" {
   allocated_storage           = 10
   engine                      = "postgres"
-  engine_version              = "14.1"
+  engine_version              = "14.3"
   instance_class              = "db.t3.micro"
   username                    = "postgres"
-  password = var.POSTGRES_PASSWORD
+  password                    = var.POSTGRES_PASSWORD
   #  manage_master_user_password = true
   db_subnet_group_name = aws_db_subnet_group.ps_db_subnet_group.name
   vpc_security_group_ids = [aws_security_group.ps_db_migration.id]

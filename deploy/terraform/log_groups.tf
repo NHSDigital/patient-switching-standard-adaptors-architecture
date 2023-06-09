@@ -30,6 +30,10 @@ resource "aws_cloudwatch_log_group" "mock_spine_logs" {
   name = "/ecs/gp2gp_ps/mock_spine"
 }
 
+resource "aws_cloudwatch_log_group" "facade_logs" {
+  name = "/ecs/gp2gp_ps/facade"
+}
+
 resource "aws_cloudwatch_log_stream" "inbound_stream" {
   name           = "ps-daisychain"
   log_group_name = aws_cloudwatch_log_group.inbound_logs.name
@@ -63,4 +67,9 @@ resource "aws_cloudwatch_log_stream" "gpcc_stream" {
 resource "aws_cloudwatch_log_stream" "activemq_stream" {
   name           = "ps-daisychain"
   log_group_name = aws_cloudwatch_log_group.activemq_logs.name
+}
+
+resource "aws_cloudwatch_log_stream" "facade_stream" {
+  name           = "ps-daisychain"
+  log_group_name = aws_cloudwatch_log_group.facade_logs.name
 }
