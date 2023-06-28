@@ -177,7 +177,7 @@ variable "GPC_CONSUMER_LOGGING_LEVEL" {
 }
 
 variable "GPC_CONSUMER_SDS_APIKEY" {
-  type    = string
+  type = string
 }
 
 variable "GPC_CONSUMER_SDS_URL" {
@@ -201,7 +201,22 @@ variable "MAX_RESYNC_RETRIES" {
 }
 
 variable "MHS_AMQP_BROKER" {
-  type    = string
+  type = string
+}
+
+variable "PS_DB_PORT" {
+  type    = number
+  default = 5436
+}
+
+variable "MHS_OUTBOUND_PORT" {
+  type    = number
+  default = 80
+}
+
+variable "FACADE_SERVER_PORT" {
+  type    = number
+  default = 8081
 }
 
 variable "MHS_AMQP_MAX_REDELIVERIES" {
@@ -211,6 +226,61 @@ variable "MHS_AMQP_MAX_REDELIVERIES" {
 
 variable "MHS_BASE_URL" {
   type = string
+}
+
+variable "MONGODB_VERSION" {
+  type    = string
+  default = "mongo"
+}
+
+variable "PS_DB_MIGRATION_VERSION" {
+  type    = string
+  default = "nhsdev/nia-ps-db-migration:0.3-amd64"
+}
+
+variable "WIREMOCK_PORT" {
+  type    = number
+  default = 8080
+}
+
+variable "WIREMOCK_VERSION" {
+  type    = string
+  default = "nhsdev/nia-gpc-provider-wiremock:0.1"
+}
+
+variable "MHS_INBOUND_VERSION" {
+  type    = string
+  default = "nhsdev/nia-mhs-inbound:1.2.5-amd64"
+}
+
+variable "MHS_OUTBOUND_VERSION" {
+  type    = string
+  default = "nhsdev/nia-mhs-outbound:1.2.5-amd64"
+}
+
+variable "PS_TRANSLATOR_VERSION" {
+  type    = string
+  default = "nhsdev/nia-ps-adaptor:0.9-amd64"
+}
+
+variable "PS_FACADE_VERSION" {
+  type    = string
+  default = "nhsdev/nia-ps-facade:0.4-amd64"
+}
+
+variable "GP2GP_ADAPTOR_VERSION" {
+  type    = string
+  default = "nhsdev/nia-gp2gp-adaptor:1.5.9-amd64"
+}
+
+variable "GPCC_ADAPTOR_VERSION" {
+  type    = string
+  default = "nhsdev/nia-gpc-consumer-adaptor:0.3.3"
+}
+
+variable "MOCK_SPINE_PORT" {
+  type    = number
+  default = 8086
 }
 
 variable "MHS_DB_ENDPOINT_URL" {
