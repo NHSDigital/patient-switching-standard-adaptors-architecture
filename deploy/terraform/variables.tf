@@ -178,7 +178,6 @@ variable "GPC_CONSUMER_LOGGING_LEVEL" {
 
 variable "GPC_CONSUMER_SDS_APIKEY" {
   type    = string
-  default = "anykey"
 }
 
 variable "GPC_CONSUMER_SDS_URL" {
