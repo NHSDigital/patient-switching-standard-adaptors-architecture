@@ -93,7 +93,7 @@ resource "aws_iam_role_policy" "ecs_logging_role_policy" {
         Action = [
           "logs:*"
         ]
-        Effect = "Allow"
+        Effect   = "Allow"
         Resource = "*"
       },
     ]
@@ -110,7 +110,7 @@ resource "aws_iam_role_policy" "mq_permissions" {
         Action = [
           "mq:*"
         ]
-        Effect = "Allow"
+        Effect   = "Allow"
         Resource = "*"
       },
     ]
@@ -128,7 +128,7 @@ resource "aws_iam_role_policy" "secret_store_permissions" {
           "secretsmanager:*",
           "ssm:*"
         ]
-        Effect = "Allow"
+        Effect   = "Allow"
         Resource = "*"
       },
     ]
@@ -145,7 +145,7 @@ resource "aws_iam_role_policy" "s3_permissions" {
         Action = [
           "s3:*"
         ]
-        Effect = "Allow"
+        Effect   = "Allow"
         Resource = "*"
       },
     ]
