@@ -200,10 +200,6 @@ variable "MAX_RESYNC_RETRIES" {
   default = 3
 }
 
-variable "MHS_AMQP_BROKER" {
-  type = string
-}
-
 variable "PS_DB_PORT" {
   type    = number
   default = 5436
