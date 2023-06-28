@@ -202,7 +202,6 @@ variable "MAX_RESYNC_RETRIES" {
 
 variable "MHS_AMQP_BROKER" {
   type    = string
-  default = "amqp://activemq:5672"
 }
 
 variable "MHS_AMQP_MAX_REDELIVERIES" {
