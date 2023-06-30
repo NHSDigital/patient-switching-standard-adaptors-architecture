@@ -40,11 +40,11 @@ resource "aws_mq_broker" "gp2gp_ps_broker" {
   host_instance_type = "mq.t2.micro"
   #  deployment_mode = "ACTIVE_STANDBY_MULTI_AZ"
 
-  subnet_ids = [aws_subnet.nia_gp2gp_public_subnet[0].id]
+  subnet_ids      = [aws_subnet.nia_gp2gp_public_subnet[0].id, aws_subnet.nia_gp2gp_public_subnet2[0].id]
   security_groups = [aws_security_group.nia_gp2gp_mq.id]
 
   configuration {
-    id = aws_mq_configuration.gp2gp_ps_config.id
+    id       = aws_mq_configuration.gp2gp_ps_config.id
     revision = aws_mq_configuration.gp2gp_ps_config.latest_revision
   }
 
@@ -53,8 +53,8 @@ resource "aws_mq_broker" "gp2gp_ps_broker" {
   }
 
   user {
-    username = var.MQ_USERNAME
-    password = var.MQ_PASSWORD
+    username       = var.MQ_USERNAME
+    password       = var.MQ_PASSWORD
     console_access = true
   }
 }

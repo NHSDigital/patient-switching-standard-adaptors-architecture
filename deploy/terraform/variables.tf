@@ -102,6 +102,16 @@ variable "GP2GP_AMQP_BROKERS" {
   default = "amqp://localhost:5672"
 }
 
+variable "GP2GP_MONGO_TTL" {
+  type = string
+  default = null
+}
+
+variable "GP2GP_GPC_STRUCTURED_FHIR_BASE" {
+  type = string
+  default = null
+}
+
 variable "GP2GP_AMQP_MAX_REDELIVERIES" {
   type    = string
   default = "3"
