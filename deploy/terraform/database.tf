@@ -1,6 +1,6 @@
 resource "aws_db_subnet_group" "ps_db_subnet_group" {
   name       = "ps_db_subnet_group"
-  subnet_ids = [for subnet in aws_subnet.nia_gp2gp_public_subnet : subnet.id]
+  subnet_ids = [aws_subnet.nia_gp2gp_public_subnet[0].id, aws_subnet.nia_gp2gp_public_subnet2[0].id]
 }
 
 resource "aws_db_instance" "ps_db" {

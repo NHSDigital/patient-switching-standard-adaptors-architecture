@@ -1,11 +1,6 @@
 ## Application Secrets ##
 // we might want to handle these differently in tf
 
-variable "AZURE_STORAGE_CONNECTION_STRING" {
-  type      = string
-  sensitive = true
-}
-
 variable "GP2GP_AMQP_PASSWORD" {
   type      = string
   sensitive = true
@@ -117,20 +112,47 @@ variable "GP2GP_COSMOS_DB_ENABLED" {
   default = "false"
 }
 
-variable "GP2GP_GPC_GET_URL" {
-  type = string
+variable "GP2GP_GPC_DOCUMENTS_FHIR_BASE" {
+  type    = string
+  default = ""
 }
 
-variable "GP2GP_GPC_STRUCTURED_FHIR_BASE" {
-  type = string
+variable "GP2GP_GPC_GET_TEST_URL" {
+  type    = string
+  default = ""
+}
+
+variable "GP2GP_GPC_GET_URL" {
+  type    = string
+  default = "http://localhost:8090/@ODS_CODE@/STU3/1/gpconnect"
+}
+
+variable "GP2GP_SSL_TRUST_STORE_URL" {
+  type    = string
+  default = ""
+}
+
+variable "GP2GP_GPC_OVERRIDE_FROM_ASID" {
+  type    = string
+  default = ""
+}
+variable "GP2GP_GPC_OVERRIDE_NHS_NUMBER" {
+  type    = string
+  default = ""
+}
+variable "GP2GP_GPC_OVERRIDE_TO_ASID" {
+  type    = string
+  default = ""
 }
 
 variable "GP2GP_LARGE_ATTACHMENT_THRESHOLD" {
-  type = string
+  type    = string
+  default = "31216"
 }
 
 variable "GP2GP_LARGE_EHR_EXTRACT_THRESHOLD" {
-  type = string
+  type    = string
+  default = "31216"
 }
 
 variable "GP2GP_LOGGING_LEVEL" {
@@ -138,19 +160,21 @@ variable "GP2GP_LOGGING_LEVEL" {
   default = "DEBUG"
 }
 variable "GP2GP_MHS_INBOUND_QUEUE" {
-  type = string
+  type    = string
+  default = "gp2gpInboundQueue"
 }
 variable "GP2GP_MHS_OUTBOUND_URL" {
-  type = string
+  type    = string
+  default = "http://localhost:80"
 }
 variable "GP2GP_MONGO_DATABASE_NAME" {
-  type = string
+  type    = string
+  default = "gp2gp"
 }
-variable "GP2GP_MONGO_TTL" {
-  type = string
-}
+
 variable "GP2GP_MONGO_URI" {
-  type = string
+  type    = string
+  default = "mongodb://localhost:27017"
 }
 variable "GP2GP_SERVER_PORT" {
   type    = number
@@ -164,11 +188,25 @@ variable "GP2GP_STORAGE_CONTAINER_NAME" {
 
 variable "GP2GP_STORAGE_TYPE" {
   type    = string
-  default = null
+  default = "S3"
 }
 
 variable "GP2GP_TRANSLATOR_SERVER_PORT" {
-  type = string
+  type    = number
+  default = 8085
+}
+
+variable "GPC_CONSUMER_GPC_GET_DOCUMENT_PATH" {
+  type    = string
+  default = ""
+}
+variable "GPC_CONSUMER_GPC_GET_PATIENT_PATH" {
+  type    = string
+  default = ""
+}
+variable "GPC_CONSUMER_GPC_STRUCTURED_PATH" {
+  type    = string
+  default = ""
 }
 
 variable "GPC_CONSUMER_LOGGING_LEVEL" {
@@ -185,6 +223,11 @@ variable "GPC_CONSUMER_SDS_URL" {
   default = "http://localhost:8080/spine-directory/"
 }
 
+variable "GPC_CONSUMER_SEARCH_DOCUMENTS_PATH" {
+  type    = string
+  default = ""
+}
+
 variable "GPC_CONSUMER_SERVER_PORT" {
   type    = number
   default = 8090
@@ -193,6 +236,31 @@ variable "GPC_CONSUMER_SERVER_PORT" {
 variable "GPC_CONSUMER_SPINE_CLIENT_CERT" {
   type    = string
   default = null
+}
+
+variable "GPC_CONSUMER_SPINE_CLIENT_KEY" {
+  type    = string
+  default = null
+}
+
+variable "GPC_CONSUMER_SPINE_ROOT_CA_CERT" {
+  type    = string
+  default = null
+}
+
+variable "GPC_CONSUMER_SPINE_SUB_CA_CERT" {
+  type    = string
+  default = null
+}
+
+variable "GPC_CONSUMER_SSP_URL" {
+  type    = string
+  default = null
+}
+
+variable "GPC_FACADE_SERVER_PORT" {
+  type    = string
+  default = ""
 }
 
 variable "MAX_RESYNC_RETRIES" {
@@ -221,7 +289,8 @@ variable "MHS_AMQP_MAX_REDELIVERIES" {
 }
 
 variable "MHS_BASE_URL" {
-  type = string
+  type    = string
+  default = "http://localhost:80/"
 }
 
 variable "MONGODB_VERSION" {
@@ -285,7 +354,8 @@ variable "MHS_DB_ENDPOINT_URL" {
 }
 
 variable "MHS_FORWARD_RELIABLE_ENDPOINT_URL" {
-  type = string
+  type    = string
+  default = "https://localhost:8443/reliablemessaging/forwardreliable"
 }
 
 variable "MHS_INBOUND_HEALTHCHECK_SERVER_PORT" {
@@ -308,6 +378,11 @@ variable "MHS_INBOUND_SERVICE_PORTS" {
   default = "443,8084"
 }
 
+variable "SERVICE_PORTS" {
+  type    = string
+  default = ""
+}
+
 variable "MHS_INBOUND_USE_SSL" {
   type    = bool
   default = false
@@ -319,11 +394,13 @@ variable "MHS_LOG_LEVEL" {
 }
 
 variable "MHS_OUTBOUND_ROUTING_LOOKUP_METHOD" {
-  type = string
+  type    = string
+  default = "SPINE_ROUTE_LOOKUP"
 }
 
 variable "MHS_OUTBOUND_VALIDATE_CERTIFICATE" {
-  type = string
+  type    = bool
+  default = false
 }
 
 variable "MHS_QUEUE_NAME" {
@@ -331,7 +408,8 @@ variable "MHS_QUEUE_NAME" {
 }
 
 variable "MHS_RESYNC_INTERVAL" {
-  type = string
+  type    = string
+  default = "1"
 }
 
 variable "MHS_SDS_API_KEY" {
@@ -343,15 +421,18 @@ variable "MHS_SDS_API_URL" {
 }
 
 variable "MHS_SPINE_ORG_CODE" {
-  type = string
+  type    = string
+  default = "YES"
 }
 
 variable "MHS_SPINE_REQUEST_MAX_SIZE" {
-  type = string
+  type    = number
+  default = 4999600
 }
 
 variable "MHS_SPINE_ROUTE_LOOKUP_URL" {
-  type = string
+  type    = string
+  default = "http://localhost:8086"
 }
 
 variable "MHS_STATE_TABLE_NAME" {
@@ -365,7 +446,8 @@ variable "MHS_SYNC_ASYNC_STATE_TABLE_NAME" {
 }
 
 variable "PS_AMQP_BROKER" {
-  type = string
+  type    = string
+  default = null
 }
 
 variable "PS_AMQP_MAX_REDELIVERIES" {
@@ -389,11 +471,13 @@ variable "PS_LOGGING_LEVEL" {
 }
 
 variable "PS_QUEUE_NAME" {
-  type = string
+  type    = string
+  default = "pssQueue"
 }
 
 variable "STORAGE_CONTAINER_NAME" {
-  type = string
+  type    = string
+  default = "ps-storage-bucket"
 }
 
 variable "STORAGE_REFERENCE" {
@@ -401,11 +485,13 @@ variable "STORAGE_REFERENCE" {
 }
 
 variable "STORAGE_REGION" {
-  type = string
+  type    = string
+  default = "eu-west-2"
 }
 
 variable "STORAGE_TYPE" {
-  type = string
+  type    = string
+  default = "LocalMock"
 }
 
 variable "SUPPORTED_FILE_TYPES" {
@@ -417,7 +503,7 @@ variable "SUPPORTED_FILE_TYPES" {
 
 variable "cpu" {
   type    = number
-  default = 1
+  default = 2048
 }
 
 variable "http_server_port" {
@@ -426,8 +512,8 @@ variable "http_server_port" {
 }
 
 variable "memory" {
-  type    = string
-  default = "256mb"
+  type    = number
+  default = 4096
 }
 
 variable "public_subnet_cidr_blocks" {
@@ -461,6 +547,7 @@ variable "subnet_count" {
   description = "Number of subnets"
   type        = map(number)
   default = {
+    public  = 0,
     public  = 1,
     private = 2
   }

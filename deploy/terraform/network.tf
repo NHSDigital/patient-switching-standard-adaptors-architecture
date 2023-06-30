@@ -33,6 +33,17 @@ resource "aws_subnet" "nia_gp2gp_public_subnet" {
   }
 }
 
+resource "aws_subnet" "nia_gp2gp_public_subnet2" {
+  count             = var.subnet_count.public
+  cidr_block        = var.public_subnet_cidr_blocks[count.index + 1]
+  vpc_id            = aws_vpc.nia_gp2gp_vpc.id
+  availability_zone = data.aws_availability_zones.available.names[count.index + 1]
+
+  tags = {
+    Name = "nia_gp2gp_public_subnet_${count.index + 1}"
+  }
+}
+
 resource "aws_subnet" "nia_gp2gp_private_subnet" {
   count             = var.subnet_count.private
   vpc_id            = aws_vpc.nia_gp2gp_vpc.id
