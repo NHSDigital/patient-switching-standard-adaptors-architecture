@@ -99,7 +99,7 @@ data "template_file" "gp2gp_ps_task_template" {
     PS_AMQP_BROKER = var.PS_AMQP_BROKER
     PS_AMQP_MAX_REDELIVERIES = var.PS_AMQP_MAX_REDELIVERIES
     PS_DAISY_CHAINING_ACTIVE = var.PS_DAISY_CHAINING_ACTIVE
-    PS_DB_URL = var.PS_DB_URL
+    PS_DB_URL = "jdbc:postgresql://${aws_db_instance.ps_db.endpoint}"
     PS_LOGGING_LEVEL = var.PS_LOGGING_LEVEL
     GP2GP_LOGGING_LEVEL = var.GP2GP_LOGGING_LEVEL
     PS_QUEUE_NAME = var.PS_QUEUE_NAME
