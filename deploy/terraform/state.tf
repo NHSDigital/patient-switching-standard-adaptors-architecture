@@ -1,4 +1,12 @@
-
+terraform {
+  backend "s3" {
+    bucket = "ps-adaptors-terraform-state"
+    key = "global/s3/terraform.tfstate"
+    region = "eu-west-2"
+    dynamodb_table = "ps-adaptors-tf-locks"
+    encrypt = true
+  }
+}
 
 
 resource "aws_s3_bucket" "ps_adaptors_tf_state" {
@@ -6,7 +14,7 @@ resource "aws_s3_bucket" "ps_adaptors_tf_state" {
 
   # Prevent accidental deletion of this S3 bucket
   lifecycle {
-    prevent_destroy = false
+    prevent_destroy = true
   }
 }
 
