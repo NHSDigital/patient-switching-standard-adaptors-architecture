@@ -6,6 +6,10 @@
 #        sensitive=true
 #}
 
+locals {
+  ps_db_instance_url = "jdbc:postgresql://${aws_db_instance.ps_db.endpoint}"
+}
+
 variable "GP2GP_AMQP_PASSWORD" {
   type      = string
   sensitive = true
@@ -504,17 +508,6 @@ variable "public_subnet_cidr_blocks" {
     "10.0.2.0/24",
     "10.0.3.0/24",
     "10.0.4.0/24",
-  ]
-}
-
-variable "public_subnet_2_cidr_blocks" {
-  description = "Available CIDR blocks for public subnets"
-  type        = list(string)
-  default = [
-    "10.0.5.0/24",
-    "10.0.6.0/24",
-    "10.0.7.0/24",
-    "10.0.8.0/24",
   ]
 }
 

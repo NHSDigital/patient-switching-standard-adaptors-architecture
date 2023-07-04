@@ -20,6 +20,6 @@ output "amq_endpoint" {
 }
 
 output "ps_db_instance_url" {
-  value       = "jdbc:postgresql://${aws_db_instance.ps_db.endpoint}"
-  description = "The name of DynamoDB state table"
+  value       = local.ps_db_instance_url # "jdbc:postgresql://${aws_db_instance.ps_db.endpoint}"
+  description = "PostgreSQL DB url"
 }
