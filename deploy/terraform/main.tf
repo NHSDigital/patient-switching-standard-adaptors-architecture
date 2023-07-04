@@ -181,7 +181,7 @@ resource "aws_ecs_service" "gp2gp_ps" {
   network_configuration {
     subnets = [for subnet in aws_subnet.nia_gp2gp_public_subnet : subnet.id]
     assign_public_ip = "true"
-    security_groups = [aws_security_group.nia_gp2gp_dmz.id]
+    security_groups = [aws_security_group.nia_gp2gp_dmz.id, aws_security_group.ps_db_migration.id]
   }
 
   #Not sure if set up correctly - currently only using for a Health Check (should probably be using Inbound)
