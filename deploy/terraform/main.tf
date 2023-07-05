@@ -99,7 +99,7 @@ data "template_file" "gp2gp_ps_task_template" {
     PS_AMQP_BROKER = var.PS_AMQP_BROKER
     PS_AMQP_MAX_REDELIVERIES = var.PS_AMQP_MAX_REDELIVERIES
     PS_DAISY_CHAINING_ACTIVE = var.PS_DAISY_CHAINING_ACTIVE
-    PS_DB_URL = var.PS_DB_URL
+    PS_DB_URL = local.ps_db_instance_url
     PS_LOGGING_LEVEL = var.PS_LOGGING_LEVEL
     GP2GP_LOGGING_LEVEL = var.GP2GP_LOGGING_LEVEL
     PS_QUEUE_NAME = var.PS_QUEUE_NAME
@@ -181,7 +181,7 @@ resource "aws_ecs_service" "gp2gp_ps" {
   network_configuration {
     subnets = [for subnet in aws_subnet.nia_gp2gp_public_subnet : subnet.id]
     assign_public_ip = "true"
-    security_groups = [aws_security_group.nia_gp2gp_dmz.id]
+    security_groups = [aws_security_group.nia_gp2gp_dmz.id, aws_security_group.ps_db_migration.id]
   }
 
   #Not sure if set up correctly - currently only using for a Health Check (should probably be using Inbound)
