@@ -483,7 +483,7 @@ variable "SUPPORTED_FILE_TYPES" {
   default = "application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msoutlook,text/rtf,text/plain,image/bmp,image/gif,image/jpeg,image/png,image/tiff,application/xml,audio/x-aiff,audio/x-mpegurl,audio/mpeg,audio/x-wav,audio/x-ms-wma,video/3gpp2,video/3gpp,video/x-ms-asf,video/x-ms-asf,video/x-msvideo,video/x-flv,video/quicktime,video/mp4,video/mpeg,audio/vnd.rn-realaudio,application/x-shockwave-flash,video/x-ms-vob,video/x-ms-wmv,application/postscript,application/postscript,image/svg+xml,image/x-pict,application/pdf,application/vnd.openxmlformats-package.relationships+xml,text/css,text/html,application/xhtml+xml,text/plain,application/json,text/xml,application/xml,application/pdf,audio/basic,audio/mpeg,image/png,image/gif,image/jpeg,image/tiff,video/mpeg,application/msword,application/octet-stream,text/csv,application/dicom,application/zip,application/x-rar-compressed,application/x-gzip,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/x-mplayer2,audio/x-au,application/x-troff-msvideo,video/msvideo,image/x-windows-bmp,application/pkix-cert,application/x-x509-ca-cert,application/cdf,application/x-cdf,application/x-netcdf,application/x-x509-user-cert,application/EDIFACT,application/EDI-X12,application/EDI-Consent,application/hl7-v2,application/hl7-v2+xml,video/x-mpeg,application/pkcs10,application/x-pkcs10,application/pkcs-12,application/x-pkcs12,application/x-pkcs7-signature,application/pkcs7-mime,application/x-pkcs7-mime,application/pkcs7-mime,application/x-pkcs7-mime,application/x-pkcs7-certreqresp,application/pkcs7-signature,application/x-rtf,application/x-compressed,application/x-zip-compressed,multipart/x-zip,application/pgp,application/pgp-keys,application/pgp-signature,application/x-pgp-plugin,application/pgp-encrypted,audio/wav,audio/wave,audio/x-pn-wav,chemical/x-mdl-sdfile,chemical/x-mdl-molfile,chemical/x-pdb,application/x-hl7"
 }
 
-## Infrastrcuture Environment ##
+## Infrastructure Environment ##
 
 variable "cpu" {
   type    = number
@@ -540,6 +540,53 @@ variable "vpc_cidr_block" {
   description = "CIDR block for VPC"
   type        = string
   default     = "10.0.0.0/16"
+}
+
+variable "allow_all_cidr_block" {
+  description = "CIDR block to allow all IP addresses"
+  type = string
+  default = "0.0.0.0/0"
+}
+
+variable "allow_all_ipv6_cidr_block" {
+  description = "IPV6 CIDR block to allow all IP addresses"
+  type = string
+  default = "::/0"
+}
+
+variable "mq_engine_type" {
+  description = "Message queue engine type"
+  type = string
+  default = "ActiveMQ"
+}
+
+variable "mq_engine_version" {
+  description = "Message queue engine version"
+  type = string
+  default = "5.16.3"
+}
+
+variable "mq_host_type" {
+  description = "Message queue host instance type"
+  type = string
+  default = "mq.t2.micro"
+}
+
+variable "dynamodb_table_hash_key" {
+  description = "Attribute to use as the dynamodb hash key"
+  type = string
+  default = "key"
+}
+
+variable "dynamodb_table_billing_mode" {
+  description = "Billing mode for the dynamodb table"
+  type = string
+  default = "PAY_PER_REQUEST"
+}
+
+variable "cloudwatch_log_stream_name" {
+  type = string
+  default = "ps-daisychain"
 }
 
 variable "MHS_INBOUND_VERSION" {
@@ -620,3 +667,6 @@ variable "MQ_PASSWORD" {
   type    = string
   default = null
 }
+
+
+

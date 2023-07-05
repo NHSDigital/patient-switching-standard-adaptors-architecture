@@ -47,7 +47,7 @@ resource "aws_subnet" "nia_gp2gp_private_subnet" {
 resource "aws_route_table" "nia_gp2gp_public_rt" {
   vpc_id = aws_vpc.nia_gp2gp_vpc.id
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block = var.allow_all_cidr_block
     gateway_id = aws_internet_gateway.nia_gp2gp_igw.id
   }
 }
@@ -77,7 +77,7 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
     from_port   = var.http_server_port
     protocol    = "tcp"
     to_port     = var.http_server_port
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.allow_all_ipv6_cidr_block]
   }
 
   //TODO: restrict access to match current restrictions
@@ -87,7 +87,7 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
     from_port = 8081
     protocol  = "TCP"
     to_port   = 8081
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.allow_all_cidr_block]
     description = "Facade Traffic"
   }
 
@@ -96,7 +96,7 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
     from_port = 443
     protocol  = "TCP"
     to_port   = 443
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.allow_all_cidr_block]
     description = "Inbound Traffic"
   }
 
@@ -105,7 +105,7 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
     from_port = 8086
     protocol  = "TCP"
     to_port   = 8086
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.allow_all_cidr_block]
     description = "Mock Spine"
   }
 
@@ -114,7 +114,7 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.allow_all_cidr_block]
   }
 
   tags = {
@@ -140,8 +140,8 @@ resource "aws_security_group" "nia_gp2gp_private" {
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    cidr_blocks      = [var.allow_all_cidr_block]
+    ipv6_cidr_blocks = [var.allow_all_ipv6_cidr_block]
   }
 
   tags = {
@@ -168,8 +168,8 @@ resource "aws_security_group" "nia_gp2gp_mq" {
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    cidr_blocks      = [var.allow_all_cidr_block]
+    ipv6_cidr_blocks = [var.allow_all_ipv6_cidr_block]
   }
 
   tags = {
@@ -196,8 +196,8 @@ resource "aws_security_group" "ps_db_migration" {
     from_port        = 0
     to_port          = 0
     protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
+    cidr_blocks      = [var.allow_all_cidr_block]
+    ipv6_cidr_blocks = [var.allow_all_ipv6_cidr_block]
   }
 
   tags = {
