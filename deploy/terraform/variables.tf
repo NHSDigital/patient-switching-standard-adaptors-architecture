@@ -638,13 +638,13 @@ variable "lb_health_check_poll_interval" {
 }
 
 variable "iam_policy_version" {
-  description = ""
+  description = "Version for IAM policies"
   type = string
   default = "2012-10-17"
 }
 
 variable "iam_statement_assume_role" {
-  description = ""
+  description = "Policy statement with the defaults for assume role"
   type = list(object({
     Action = string
     Effect = string
@@ -666,13 +666,13 @@ variable "iam_statement_assume_role" {
 }
 
 variable "iam_role_policy_effect_allow" {
-  description = ""
+  description = "IAM role policy effect for allow"
   type = string
   default = "Allow"
 }
 
 variable "iam_role_policy_resource_all" {
-  description = ""
+  description = "IWM role policy resource for all"
   type = string
   default = "*"
 }
