@@ -75,45 +75,45 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
 
   ingress {
     from_port   = var.http_server_port
-    protocol    = "tcp"
+    protocol    = var.vpc_protocol_default
     to_port     = var.http_server_port
     cidr_blocks = [var.allow_all_ipv6_cidr_block]
   }
 
   //TODO: restrict access to match current restrictions
 
-  //ACCEPT TRAFFIC TO FACADE PORT 8081
+  //ACCEPT TRAFFIC TO FACADE PORT
   ingress {
-    from_port = 8081
-    protocol  = "TCP"
-    to_port   = 8081
+    from_port = var.FACADE_SERVER_PORT
+    protocol  = var.vpc_protocol_default
+    to_port   = var.FACADE_SERVER_PORT
     cidr_blocks = [var.allow_all_cidr_block]
     description = "Facade Traffic"
   }
 
-  //ACCEPT TRAFFIC TO INBOUND PORT 443
+  //ACCEPT TRAFFIC TO MHS INBOUND PORT
   ingress {
-    from_port = 443
-    protocol  = "TCP"
-    to_port   = 443
+    from_port = var.MHS_INBOUND_PORT
+    protocol  = var.vpc_protocol_default
+    to_port   = var.MHS_INBOUND_PORT
     cidr_blocks = [var.allow_all_cidr_block]
     description = "Inbound Traffic"
   }
 
-  //ACCEPT TRAFFIC TO MOCK SPINE PORT 8086
+  //ACCEPT TRAFFIC TO MOCK SPINE PORT
   ingress {
-    from_port = 8086
-    protocol  = "TCP"
-    to_port   = 8086
+    from_port = var.MOCK_SPINE_PORT
+    protocol  = var.vpc_protocol_default
+    to_port   = var.MOCK_SPINE_PORT
     cidr_blocks = [var.allow_all_cidr_block]
     description = "Mock Spine"
   }
 
   egress {
     //allow all
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port   = var.allow_all_vpc_port
+    to_port     = var.allow_all_vpc_port
+    protocol    = var.allow_all_vpc_protocol
     cidr_blocks = [var.allow_all_cidr_block]
   }
 
@@ -129,17 +129,17 @@ resource "aws_security_group" "nia_gp2gp_private" {
 
   ingress {
     description     = "Allow HTTPS traffic from only the pubic sg"
-    from_port       = "443"
-    protocol        = "tcp"
-    to_port         = "443"
+    from_port       = var.MHS_INBOUND_PORT
+    protocol        = var.vpc_protocol_default
+    to_port         = var.MHS_INBOUND_PORT
     security_groups = [aws_security_group.nia_gp2gp_dmz.id]
   }
 
   egress {
     //allow all
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
+    from_port   = var.allow_all_vpc_port
+    to_port     = var.allow_all_vpc_port
+    protocol    = var.allow_all_vpc_protocol
     cidr_blocks      = [var.allow_all_cidr_block]
     ipv6_cidr_blocks = [var.allow_all_ipv6_cidr_block]
   }
@@ -157,17 +157,17 @@ resource "aws_security_group" "nia_gp2gp_mq" {
 
   ingress {
     description     = "Allow traffic to message queue"
-    from_port       = "5671"
-    protocol        = "tcp"
-    to_port         = "5671"
+    from_port       = var.MQ_PORT
+    protocol        = var.vpc_protocol_default
+    to_port         = var.MQ_PORT
     security_groups = [aws_security_group.nia_gp2gp_dmz.id]
   }
 
   egress {
     //allow all
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
+    from_port        = var.allow_all_vpc_port
+    to_port          = var.allow_all_vpc_port
+    protocol         = var.allow_all_vpc_protocol
     cidr_blocks      = [var.allow_all_cidr_block]
     ipv6_cidr_blocks = [var.allow_all_ipv6_cidr_block]
   }
@@ -185,17 +185,17 @@ resource "aws_security_group" "ps_db_migration" {
 
   ingress {
     description     = "Allow PS DB traffic"
-    from_port       = "5432"
-    protocol        = "tcp"
-    to_port         = "5432"
+    from_port       = var.PS_DB_PORT
+    protocol        = var.vpc_protocol_default
+    to_port         = var.PS_DB_PORT
     security_groups = [aws_security_group.nia_gp2gp_dmz.id]
   }
 
   egress {
     //allow all
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
+    from_port        = var.allow_all_vpc_port
+    to_port          = var.allow_all_vpc_port
+    protocol         = var.allow_all_vpc_protocol
     cidr_blocks      = [var.allow_all_cidr_block]
     ipv6_cidr_blocks = [var.allow_all_ipv6_cidr_block]
   }
@@ -223,53 +223,53 @@ resource "aws_lb" "nia_gp2gp_elb" {
 }
 
 resource "aws_lb_target_group" "nia_gp2gp_target_group_inbound" {
-  target_type  = "ip"
+  target_type  = var.lb_target_type_ip
   port = var.MHS_INBOUND_PORT
-  protocol = "TCP"
+  protocol = var.vpc_protocol_default
   vpc_id = aws_vpc.nia_gp2gp_vpc.id
 
   health_check {
     enabled = true
-    interval = 300
+    interval = var.lb_health_check_poll_interval
     path = "/healthcheck"
-    matcher = "200-499"
+    matcher = var.lb_health_check_matcher_port_range
   }
 }
 
 resource "aws_lb_target_group" "nia_gp2gp_target_group_spine" {
-  target_type  = "ip"
+  target_type  = var.lb_target_type_ip
   port = var.MOCK_SPINE_PORT
-  protocol = "TCP"
+  protocol = var.vpc_protocol_default
   vpc_id = aws_vpc.nia_gp2gp_vpc.id
 
   health_check {
     enabled = true
-    interval = 300
+    interval = var.lb_health_check_poll_interval
     path = "/"
-    matcher = "200-499"
+    matcher = var.lb_health_check_matcher_port_range
   }
 }
 
 resource "aws_lb_target_group" "nia_gp2gp_target_group_facade" {
-  target_type  = "ip"
+  target_type  = var.lb_target_type_ip
   port = var.FACADE_SERVER_PORT
-  protocol = "TCP"
+  protocol = var.vpc_protocol_default
   vpc_id = aws_vpc.nia_gp2gp_vpc.id
 
   health_check {
     enabled = true
-    interval = 300
+    interval = var.lb_health_check_poll_interval
     path = "/"
-    matcher = "200-499"
+    matcher = var.lb_health_check_matcher_port_range
   }
 }
 
 resource "aws_lb_listener" "mhs_inbound" {
   load_balancer_arn = aws_lb.nia_gp2gp_elb.arn
   port           = var.MHS_INBOUND_PORT
-  protocol       = "TCP"
+  protocol       = var.vpc_protocol_default
   default_action {
-    type             = "forward"
+    type             = var.lb_listener_default_action_type
     target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_inbound.arn
   }
 }
@@ -277,9 +277,9 @@ resource "aws_lb_listener" "mhs_inbound" {
 resource "aws_lb_listener" "mock_spine" {
   load_balancer_arn = aws_lb.nia_gp2gp_elb.arn
   port           = var.MOCK_SPINE_PORT
-  protocol       = "TCP"
+  protocol       = var.vpc_protocol_default
   default_action {
-    type             = "forward"
+    type             = var.lb_listener_default_action_type
     target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_spine.arn
   }
 }
@@ -287,9 +287,9 @@ resource "aws_lb_listener" "mock_spine" {
 resource "aws_lb_listener" "facade" {
   load_balancer_arn = aws_lb.nia_gp2gp_elb.arn
   port           = var.FACADE_SERVER_PORT
-  protocol       = "TCP"
+  protocol       = var.vpc_protocol_default
   default_action {
-    type             = "forward"
+    type             = var.lb_listener_default_action_type
     target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_facade.arn
   }
 }

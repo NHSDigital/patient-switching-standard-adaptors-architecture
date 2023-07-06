@@ -47,11 +47,11 @@ resource "aws_s3_bucket_public_access_block" "ps_adaptors_s3_public_access" {
 
 resource "aws_dynamodb_table" "ps_adaptors_tf_locks" {
   name     = "ps-adaptors-tf-locks"
-  billing_mode = "PAY_PER_REQUEST"
+  billing_mode = var.dynamodb_table_billing_mode
   hash_key = "LockID"
 
   attribute {
     name = "LockID"
-    type = "S"
+    type = var.dynamodb_attribute_type_string
   }
 }

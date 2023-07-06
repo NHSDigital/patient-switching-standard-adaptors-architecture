@@ -4,7 +4,7 @@ resource "aws_dynamodb_table" "mhs_state_table" {
   billing_mode = var.dynamodb_table_billing_mode
   attribute {
     name = var.dynamodb_table_hash_key
-    type = "S"
+    type = var.dynamodb_attribute_type_string
   }
 }
 
@@ -14,6 +14,6 @@ resource "aws_dynamodb_table" "mhs_sync_async_table" {
   billing_mode = var.dynamodb_table_billing_mode
   attribute {
     name = var.dynamodb_table_hash_key
-    type = "S"
+    type = var.dynamodb_attribute_type_string
   }
 }
