@@ -16,5 +16,6 @@ resource "aws_db_instance" "ps_db" {
   #  manage_master_user_password = true
   db_subnet_group_name   = aws_db_subnet_group.ps_db_subnet_group.id
   vpc_security_group_ids = [aws_security_group.ps_db_sg.id]
+  publicly_accessible    = true
   skip_final_snapshot    = true
 }
