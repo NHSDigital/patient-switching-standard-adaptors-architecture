@@ -500,6 +500,12 @@ variable "memory" {
   default = 8192
 }
 
+variable "network_protocol" {
+  type        = string
+  description = "network protocol type"
+  default     = "TCP"
+}
+
 variable "public_subnet_cidr_blocks" {
   description = "Available CIDR blocks for public subnets"
   type        = list(string)
