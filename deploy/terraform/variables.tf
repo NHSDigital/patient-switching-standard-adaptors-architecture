@@ -8,6 +8,7 @@
 
 locals {
   ps_db_instance_url = "jdbc:postgresql://${aws_db_instance.ps_db.endpoint}"
+  tcp_network_protocol = "TCP"
 }
 
 variable "GP2GP_AMQP_PASSWORD" {

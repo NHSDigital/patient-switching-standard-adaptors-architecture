@@ -7,7 +7,7 @@
 resource "aws_vpc" "nia_gp2gp_vpc" {
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = true
-  enable_dns_support = true
+  enable_dns_support   = true
 
   tags = {
     Name = "nia_gp2gp_vpc"
@@ -46,9 +46,14 @@ resource "aws_subnet" "nia_gp2gp_private_subnet" {
 
 resource "aws_route_table" "nia_gp2gp_public_rt" {
   vpc_id = aws_vpc.nia_gp2gp_vpc.id
+
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.nia_gp2gp_igw.id
+  }
+
+  tags = {
+    Name = "public-route-table"
   }
 }
 
@@ -60,6 +65,11 @@ resource "aws_route_table_association" "public" {
 
 resource "aws_route_table" "nia_gp2gp_private_rt" {
   vpc_id = aws_vpc.nia_gp2gp_vpc.id
+
+  tags = {
+    Name = "private-route-table"
+  }
+
 }
 
 resource "aws_route_table_association" "private" {
@@ -68,14 +78,19 @@ resource "aws_route_table_association" "private" {
   subnet_id      = aws_subnet.nia_gp2gp_private_subnet[count.index].id
 }
 
+resource "aws_main_route_table_association" "default" {
+  route_table_id = aws_route_table.nia_gp2gp_public_rt.id
+  vpc_id         = aws_vpc.nia_gp2gp_vpc.id
+}
+
 resource "aws_security_group" "nia_gp2gp_dmz" {
-  name        = "nia_gp2gp_api_sg"
+  name        = "nia_gp2gp_dmz"
   description = "Public security group"
   vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   ingress {
     from_port   = var.http_server_port
-    protocol    = "tcp"
+    protocol    = local.tcp_network_protocol
     to_port     = var.http_server_port
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -84,27 +99,27 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
 
   //ACCEPT TRAFFIC TO FACADE PORT 8081
   ingress {
-    from_port = 8081
-    protocol  = "TCP"
-    to_port   = 8081
+    from_port   = 8081
+    protocol    = local.tcp_network_protocol
+    to_port     = 8081
     cidr_blocks = ["0.0.0.0/0"]
     description = "Facade Traffic"
   }
 
   //ACCEPT TRAFFIC TO INBOUND PORT 443
   ingress {
-    from_port = 443
-    protocol  = "TCP"
-    to_port   = 443
+    from_port   = 443
+    protocol    = local.tcp_network_protocol
+    to_port     = 443
     cidr_blocks = ["0.0.0.0/0"]
     description = "Inbound Traffic"
   }
 
   //ACCEPT TRAFFIC TO MOCK SPINE PORT 8086
   ingress {
-    from_port = 8086
-    protocol  = "TCP"
-    to_port   = 8086
+    from_port   = 8086
+    protocol    = local.tcp_network_protocol
+    to_port     = 8086
     cidr_blocks = ["0.0.0.0/0"]
     description = "Mock Spine"
   }
@@ -125,12 +140,12 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
 resource "aws_security_group" "nia_gp2gp_private" {
   name        = "nia_gp2gp_private"
   description = "Security group for private resources"
-  vpc_id = aws_vpc.nia_gp2gp_vpc.id
+  vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   ingress {
     description     = "Allow HTTPS traffic from only the pubic sg"
     from_port       = "443"
-    protocol        = "tcp"
+    protocol        = local.tcp_network_protocol
     to_port         = "443"
     security_groups = [aws_security_group.nia_gp2gp_dmz.id]
   }
@@ -153,12 +168,12 @@ resource "aws_security_group" "nia_gp2gp_private" {
 resource "aws_security_group" "nia_gp2gp_mq" {
   name        = "nia_gp2gp_mq"
   description = "Security group for mq"
-  vpc_id = aws_vpc.nia_gp2gp_vpc.id
+  vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   ingress {
     description     = "Allow traffic to message queue"
     from_port       = "5671"
-    protocol        = "tcp"
+    protocol        = local.tcp_network_protocol
     to_port         = "5671"
     security_groups = [aws_security_group.nia_gp2gp_dmz.id]
   }
@@ -178,17 +193,17 @@ resource "aws_security_group" "nia_gp2gp_mq" {
 
 }
 
-resource "aws_security_group" "ps_db_migration" {
-  name        = "ps_db_migration"
+resource "aws_security_group" "ps_db_sg" {
+  name        = "ps_db_sg"
   description = "Security group for db migration"
-  vpc_id = aws_vpc.nia_gp2gp_vpc.id
+  vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   ingress {
     description     = "Allow PS DB traffic"
-    from_port       = "5432"
+    from_port       = var.PS_DB_PORT
     protocol        = "tcp"
-    to_port         = "5432"
-    security_groups = [aws_security_group.nia_gp2gp_dmz.id]
+    to_port         = var.PS_DB_PORT
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -201,7 +216,7 @@ resource "aws_security_group" "ps_db_migration" {
   }
 
   tags = {
-    Name = "ps_db_migration"
+    Name = "ps_db_sg"
   }
 
 }
@@ -213,8 +228,8 @@ resource "aws_security_group" "ps_db_migration" {
 // - target group id
 
 resource "aws_lb" "nia_gp2gp_elb" {
-  name            = "nia-gp2gp-elb"
-  subnets         = [for subnet in aws_subnet.nia_gp2gp_public_subnet : subnet.id]
+  name               = "nia-gp2gp-elb"
+  subnets            = [for subnet in aws_subnet.nia_gp2gp_public_subnet : subnet.id]
   load_balancer_type = "network"
 
   tags = {
@@ -223,51 +238,51 @@ resource "aws_lb" "nia_gp2gp_elb" {
 }
 
 resource "aws_lb_target_group" "nia_gp2gp_target_group_inbound" {
-  target_type  = "ip"
-  port = var.MHS_INBOUND_PORT
-  protocol = "TCP"
-  vpc_id = aws_vpc.nia_gp2gp_vpc.id
+  target_type = "ip"
+  port        = var.MHS_INBOUND_PORT
+  protocol    = local.tcp_network_protocol
+  vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   health_check {
-    enabled = true
+    enabled  = true
     interval = 300
-    path = "/healthcheck"
-    matcher = "200-499"
+    path     = "/healthcheck"
+    matcher  = "200-499"
   }
 }
 
 resource "aws_lb_target_group" "nia_gp2gp_target_group_spine" {
-  target_type  = "ip"
-  port = var.MOCK_SPINE_PORT
-  protocol = "TCP"
-  vpc_id = aws_vpc.nia_gp2gp_vpc.id
+  target_type = "ip"
+  port        = var.MOCK_SPINE_PORT
+  protocol    = local.tcp_network_protocol
+  vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   health_check {
-    enabled = true
+    enabled  = true
     interval = 300
-    path = "/"
-    matcher = "200-499"
+    path     = "/"
+    matcher  = "200-499"
   }
 }
 
 resource "aws_lb_target_group" "nia_gp2gp_target_group_facade" {
-  target_type  = "ip"
-  port = var.FACADE_SERVER_PORT
-  protocol = "TCP"
-  vpc_id = aws_vpc.nia_gp2gp_vpc.id
+  target_type = "ip"
+  port        = var.FACADE_SERVER_PORT
+  protocol    = local.tcp_network_protocol
+  vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   health_check {
-    enabled = true
+    enabled  = true
     interval = 300
-    path = "/"
-    matcher = "200-499"
+    path     = "/"
+    matcher  = "200-499"
   }
 }
 
 resource "aws_lb_listener" "mhs_inbound" {
   load_balancer_arn = aws_lb.nia_gp2gp_elb.arn
-  port           = var.MHS_INBOUND_PORT
-  protocol       = "TCP"
+  port              = var.MHS_INBOUND_PORT
+  protocol          = local.tcp_network_protocol
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_inbound.arn
@@ -276,8 +291,8 @@ resource "aws_lb_listener" "mhs_inbound" {
 
 resource "aws_lb_listener" "mock_spine" {
   load_balancer_arn = aws_lb.nia_gp2gp_elb.arn
-  port           = var.MOCK_SPINE_PORT
-  protocol       = "TCP"
+  port              = var.MOCK_SPINE_PORT
+  protocol          = local.tcp_network_protocol
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_spine.arn
@@ -286,8 +301,8 @@ resource "aws_lb_listener" "mock_spine" {
 
 resource "aws_lb_listener" "facade" {
   load_balancer_arn = aws_lb.nia_gp2gp_elb.arn
-  port           = var.FACADE_SERVER_PORT
-  protocol       = "TCP"
+  port              = var.FACADE_SERVER_PORT
+  protocol          = local.tcp_network_protocol
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_facade.arn
