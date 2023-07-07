@@ -77,7 +77,7 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
     from_port   = var.http_server_port
     protocol    = var.vpc_protocol_default
     to_port     = var.http_server_port
-    cidr_blocks = [var.allow_all_ipv6_cidr_block]
+    cidr_blocks = [var.allow_all_cidr_block]
   }
 
   //TODO: restrict access to match current restrictions

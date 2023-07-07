@@ -574,7 +574,7 @@ variable "allow_all_ipv6_cidr_block" {
 variable "vpc_protocol_default" {
   description = "default protocol for VPC"
   type = string
-  default = "tcp"
+  default = "TCP"
 }
 
 variable "allow_all_vpc_protocol" {
