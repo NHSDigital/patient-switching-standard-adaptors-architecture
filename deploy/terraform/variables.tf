@@ -8,6 +8,7 @@
 
 locals {
   ps_db_instance_url = "jdbc:postgresql://${aws_db_instance.ps_db.endpoint}"
+  tcp_network_protocol = "TCP"
 }
 
 variable "GP2GP_AMQP_PASSWORD" {
@@ -498,12 +499,6 @@ variable "http_server_port" {
 variable "memory" {
   type    = number
   default = 8192
-}
-
-variable "tcp_network_protocol" {
-  type        = string
-  description = "network protocol type"
-  default     = "TCP"
 }
 
 variable "public_subnet_cidr_blocks" {
