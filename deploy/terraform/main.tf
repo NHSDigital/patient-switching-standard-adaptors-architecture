@@ -109,7 +109,7 @@ data "template_file" "gp2gp_ps_task_template" {
     STORAGE_REGION = var.STORAGE_REGION
     STORAGE_TYPE = var.STORAGE_TYPE
     SUPPORTED_FILE_TYPES = var.SUPPORTED_FILE_TYPES
-    TCP_PORTS = var.MHS_INBOUND_PORT
+    TCP_PORTS = var.HTTPS_PORT
     MHS_INBOUND_VERSION = var.MHS_INBOUND_VERSION
     MHS_OUTBOUND_VERSION = var.MHS_OUTBOUND_VERSION
     PS_TRANSLATOR_VERSION = var.PS_TRANSLATOR_VERSION
@@ -118,7 +118,7 @@ data "template_file" "gp2gp_ps_task_template" {
     GP2GP_ADAPTOR_VERSION = var.GP2GP_ADAPTOR_VERSION
     GPCC_ADAPTOR_VERSION = var.GPCC_ADAPTOR_VERSION
     MONGODB_VERSION = var.MONGODB_VERSION
-    MHS_INBOUND_PORT = var.MHS_INBOUND_PORT
+    MHS_INBOUND_PORT = var.HTTPS_PORT
     MHS_OUTBOUND_PORT = var.MHS_OUTBOUND_PORT
     MHS_INBOUND_SERVICE_PORTS = var.MHS_INBOUND_SERVICE_PORTS
     PS_DB_PORT = var.PS_DB_PORT
@@ -194,7 +194,7 @@ resource "aws_ecs_service" "gp2gp_ps" {
   load_balancer {
     target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_inbound.arn
     container_name   = "inbound"
-    container_port   = var.MHS_INBOUND_PORT
+    container_port   = var.HTTPS_PORT
   }
 
   load_balancer {

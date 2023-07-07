@@ -333,7 +333,7 @@ variable "MHS_INBOUND_HEALTHCHECK_SERVER_PORT" {
   default = 8083
 }
 
-variable "MHS_INBOUND_PORT" {
+variable "HTTPS_PORT" {
   type    = number
   default = 443
 }
@@ -571,8 +571,8 @@ variable "allow_all_ipv6_cidr_block" {
   default = "::/0"
 }
 
-variable "vpc_protocol_default" {
-  description = "default protocol for VPC"
+variable "tcp_network_protocol" {
+  description = "tcp protocol for VPC"
   type = string
   default = "TCP"
 }
