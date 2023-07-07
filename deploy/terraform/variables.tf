@@ -500,7 +500,7 @@ variable "memory" {
   default = 8192
 }
 
-variable "network_protocol" {
+variable "tcp_network_protocol" {
   type        = string
   description = "network protocol type"
   default     = "TCP"

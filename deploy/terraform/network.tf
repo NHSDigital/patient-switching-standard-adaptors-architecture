@@ -90,7 +90,7 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
 
   ingress {
     from_port   = var.http_server_port
-    protocol    = var.network_protocol
+    protocol    = var.tcp_network_protocol
     to_port     = var.http_server_port
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -100,7 +100,7 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
   //ACCEPT TRAFFIC TO FACADE PORT 8081
   ingress {
     from_port   = 8081
-    protocol    = var.network_protocol
+    protocol    = var.tcp_network_protocol
     to_port     = 8081
     cidr_blocks = ["0.0.0.0/0"]
     description = "Facade Traffic"
@@ -109,7 +109,7 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
   //ACCEPT TRAFFIC TO INBOUND PORT 443
   ingress {
     from_port   = 443
-    protocol    = var.network_protocol
+    protocol    = var.tcp_network_protocol
     to_port     = 443
     cidr_blocks = ["0.0.0.0/0"]
     description = "Inbound Traffic"
@@ -118,7 +118,7 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
   //ACCEPT TRAFFIC TO MOCK SPINE PORT 8086
   ingress {
     from_port   = 8086
-    protocol    = var.network_protocol
+    protocol    = var.tcp_network_protocol
     to_port     = 8086
     cidr_blocks = ["0.0.0.0/0"]
     description = "Mock Spine"
@@ -145,7 +145,7 @@ resource "aws_security_group" "nia_gp2gp_private" {
   ingress {
     description     = "Allow HTTPS traffic from only the pubic sg"
     from_port       = "443"
-    protocol        = var.network_protocol
+    protocol        = var.tcp_network_protocol
     to_port         = "443"
     security_groups = [aws_security_group.nia_gp2gp_dmz.id]
   }
@@ -173,7 +173,7 @@ resource "aws_security_group" "nia_gp2gp_mq" {
   ingress {
     description     = "Allow traffic to message queue"
     from_port       = "5671"
-    protocol        = var.network_protocol
+    protocol        = var.tcp_network_protocol
     to_port         = "5671"
     security_groups = [aws_security_group.nia_gp2gp_dmz.id]
   }
@@ -240,7 +240,7 @@ resource "aws_lb" "nia_gp2gp_elb" {
 resource "aws_lb_target_group" "nia_gp2gp_target_group_inbound" {
   target_type = "ip"
   port        = var.MHS_INBOUND_PORT
-  protocol    = var.network_protocol
+  protocol    = var.tcp_network_protocol
   vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   health_check {
@@ -254,7 +254,7 @@ resource "aws_lb_target_group" "nia_gp2gp_target_group_inbound" {
 resource "aws_lb_target_group" "nia_gp2gp_target_group_spine" {
   target_type = "ip"
   port        = var.MOCK_SPINE_PORT
-  protocol    = var.network_protocol
+  protocol    = var.tcp_network_protocol
   vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   health_check {
@@ -268,7 +268,7 @@ resource "aws_lb_target_group" "nia_gp2gp_target_group_spine" {
 resource "aws_lb_target_group" "nia_gp2gp_target_group_facade" {
   target_type = "ip"
   port        = var.FACADE_SERVER_PORT
-  protocol    = var.network_protocol
+  protocol    = var.tcp_network_protocol
   vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   health_check {
@@ -282,7 +282,7 @@ resource "aws_lb_target_group" "nia_gp2gp_target_group_facade" {
 resource "aws_lb_listener" "mhs_inbound" {
   load_balancer_arn = aws_lb.nia_gp2gp_elb.arn
   port              = var.MHS_INBOUND_PORT
-  protocol          = var.network_protocol
+  protocol          = var.tcp_network_protocol
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_inbound.arn
@@ -292,7 +292,7 @@ resource "aws_lb_listener" "mhs_inbound" {
 resource "aws_lb_listener" "mock_spine" {
   load_balancer_arn = aws_lb.nia_gp2gp_elb.arn
   port              = var.MOCK_SPINE_PORT
-  protocol          = var.network_protocol
+  protocol          = var.tcp_network_protocol
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_spine.arn
@@ -302,7 +302,7 @@ resource "aws_lb_listener" "mock_spine" {
 resource "aws_lb_listener" "facade" {
   load_balancer_arn = aws_lb.nia_gp2gp_elb.arn
   port              = var.FACADE_SERVER_PORT
-  protocol          = var.network_protocol
+  protocol          = var.tcp_network_protocol
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_facade.arn
