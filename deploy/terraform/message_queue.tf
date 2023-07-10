@@ -1,7 +1,7 @@
 resource "aws_mq_configuration" "gp2gp_ps_config" {
   description    = "PS Config"
   name           = "gp2gp_ps_config"
-  engine_type    = var.mq_engine_type
+  engine_type    = local.mq_engine_type
   engine_version = var.mq_engine_version
 
   data = <<DATA
@@ -35,7 +35,7 @@ DATA
 resource "aws_mq_broker" "gp2gp_ps_broker" {
   broker_name = "gp2gp_ps_broker"
 
-  engine_type    = var.mq_engine_type
+  engine_type    = local.mq_engine_type
   engine_version = var.mq_engine_version
   host_instance_type = var.mq_host_type
   #  deployment_mode = "ACTIVE_STANDBY_MULTI_AZ"

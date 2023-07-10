@@ -48,7 +48,7 @@ resource "aws_route_table" "nia_gp2gp_public_rt" {
   vpc_id = aws_vpc.nia_gp2gp_vpc.id
 
   route {
-    cidr_block = var.allow_all_cidr_block
+    cidr_block = local.allow_all_cidr_block
     gateway_id = aws_internet_gateway.nia_gp2gp_igw.id
   }
 
@@ -92,7 +92,7 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
     from_port   = var.http_server_port
     protocol    = local.tcp_network_protocol
     to_port     = var.http_server_port
-    cidr_blocks = [var.allow_all_cidr_block]
+    cidr_blocks = [local.allow_all_cidr_block]
   }
 
   //TODO: restrict access to match current restrictions
@@ -103,7 +103,7 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
     from_port   = var.FACADE_SERVER_PORT
     protocol    = local.tcp_network_protocol
     to_port     = var.FACADE_SERVER_PORT
-    cidr_blocks = [var.allow_all_cidr_block]
+    cidr_blocks = [local.allow_all_cidr_block]
     description = "Facade Traffic"
   }
 
@@ -112,7 +112,7 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
     from_port = var.HTTPS_PORT
     protocol  = local.tcp_network_protocol
     to_port   = var.HTTPS_PORT
-    cidr_blocks = [var.allow_all_cidr_block]
+    cidr_blocks = [local.allow_all_cidr_block]
     description = "Inbound Traffic"
   }
 
@@ -121,16 +121,16 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
     from_port   = var.MOCK_SPINE_PORT
     protocol    = local.tcp_network_protocol
     to_port     = var.MOCK_SPINE_PORT
-    cidr_blocks = [var.allow_all_cidr_block]
+    cidr_blocks = [local.allow_all_cidr_block]
     description = "Mock Spine"
   }
 
   egress {
     //allow all
-    from_port   = var.allow_all_vpc_port
-    to_port     = var.allow_all_vpc_port
-    protocol    = var.allow_all_vpc_protocol
-    cidr_blocks = [var.allow_all_cidr_block]
+    from_port   = local.allow_all_vpc_port
+    to_port     = local.allow_all_vpc_port
+    protocol    = local.allow_all_vpc_protocol
+    cidr_blocks = [local.allow_all_cidr_block]
   }
 
   tags = {
@@ -153,11 +153,11 @@ resource "aws_security_group" "nia_gp2gp_private" {
 
   egress {
     //allow all
-    from_port   = var.allow_all_vpc_port
-    to_port     = var.allow_all_vpc_port
-    protocol    = var.allow_all_vpc_protocol
-    cidr_blocks      = [var.allow_all_cidr_block]
-    ipv6_cidr_blocks = [var.allow_all_ipv6_cidr_block]
+    from_port   = local.allow_all_vpc_port
+    to_port     = local.allow_all_vpc_port
+    protocol    = local.allow_all_vpc_protocol
+    cidr_blocks      = [local.allow_all_cidr_block]
+    ipv6_cidr_blocks = [local.allow_all_ipv6_cidr_block]
   }
 
   tags = {
@@ -181,11 +181,11 @@ resource "aws_security_group" "nia_gp2gp_mq" {
 
   egress {
     //allow all
-    from_port        = var.allow_all_vpc_port
-    to_port          = var.allow_all_vpc_port
-    protocol         = var.allow_all_vpc_protocol
-    cidr_blocks      = [var.allow_all_cidr_block]
-    ipv6_cidr_blocks = [var.allow_all_ipv6_cidr_block]
+    from_port        = local.allow_all_vpc_port
+    to_port          = local.allow_all_vpc_port
+    protocol         = local.allow_all_vpc_protocol
+    cidr_blocks      = [local.allow_all_cidr_block]
+    ipv6_cidr_blocks = [local.allow_all_ipv6_cidr_block]
   }
 
   tags = {
@@ -202,7 +202,7 @@ resource "aws_security_group" "ps_db_sg" {
   ingress {
     description     = "Allow PS DB traffic"
     from_port       = var.PS_DB_PORT
-    protocol        = var.tcp_network_protocol
+    protocol        = local.tcp_network_protocol
     to_port         = var.PS_DB_PORT
     security_groups = [aws_security_group.nia_gp2gp_dmz.id]
     cidr_blocks = ["0.0.0.0/0"]
@@ -210,11 +210,11 @@ resource "aws_security_group" "ps_db_sg" {
 
   egress {
     //allow all
-    from_port        = var.allow_all_vpc_port
-    to_port          = var.allow_all_vpc_port
-    protocol         = var.allow_all_vpc_protocol
-    cidr_blocks      = [var.allow_all_cidr_block]
-    ipv6_cidr_blocks = [var.allow_all_ipv6_cidr_block]
+    from_port        = local.allow_all_vpc_port
+    to_port          = local.allow_all_vpc_port
+    protocol         = local.allow_all_vpc_protocol
+    cidr_blocks      = [local.allow_all_cidr_block]
+    ipv6_cidr_blocks = [local.allow_all_ipv6_cidr_block]
   }
 
   tags = {
@@ -240,7 +240,7 @@ resource "aws_lb" "nia_gp2gp_elb" {
 }
 
 resource "aws_lb_target_group" "nia_gp2gp_target_group_inbound" {
-  target_type  = var.lb_target_type_ip
+  target_type  = local.target_type_ip
   port = var.HTTPS_PORT
   protocol = local.tcp_network_protocol
   vpc_id = aws_vpc.nia_gp2gp_vpc.id
@@ -249,12 +249,12 @@ resource "aws_lb_target_group" "nia_gp2gp_target_group_inbound" {
     enabled = true
     interval = var.lb_health_check_poll_interval
     path = "/healthcheck"
-    matcher = var.lb_health_check_matcher_port_range
+    matcher = local.health_check_matcher_port_range
   }
 }
 
 resource "aws_lb_target_group" "nia_gp2gp_target_group_spine" {
-  target_type  = var.lb_target_type_ip
+  target_type  = local.target_type_ip
   port = var.MOCK_SPINE_PORT
   protocol = local.tcp_network_protocol
   vpc_id = aws_vpc.nia_gp2gp_vpc.id
@@ -263,12 +263,12 @@ resource "aws_lb_target_group" "nia_gp2gp_target_group_spine" {
     enabled = true
     interval = var.lb_health_check_poll_interval
     path = "/"
-    matcher = var.lb_health_check_matcher_port_range
+    matcher = local.health_check_matcher_port_range
   }
 }
 
 resource "aws_lb_target_group" "nia_gp2gp_target_group_facade" {
-  target_type  = var.lb_target_type_ip
+  target_type  = local.target_type_ip
   port = var.FACADE_SERVER_PORT
   protocol = local.tcp_network_protocol
   vpc_id = aws_vpc.nia_gp2gp_vpc.id
@@ -277,7 +277,7 @@ resource "aws_lb_target_group" "nia_gp2gp_target_group_facade" {
     enabled = true
     interval = var.lb_health_check_poll_interval
     path = "/"
-    matcher = var.lb_health_check_matcher_port_range
+    matcher = local.health_check_matcher_port_range
   }
 }
 
@@ -288,7 +288,7 @@ resource "aws_lb_listener" "mhs_inbound" {
   protocol       = local.tcp_network_protocol
 
   default_action {
-    type             = var.lb_listener_default_action_type
+    type             = local.action_type_forward
     target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_inbound.arn
   }
 }
@@ -300,7 +300,7 @@ resource "aws_lb_listener" "mock_spine" {
   protocol          = local.tcp_network_protocol
 
   default_action {
-    type             = var.lb_listener_default_action_type
+    type             = local.action_type_forward
     target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_spine.arn
   }
 }
@@ -312,7 +312,7 @@ resource "aws_lb_listener" "facade" {
   protocol          = local.tcp_network_protocol
 
   default_action {
-    type             = var.lb_listener_default_action_type
+    type             = local.action_type_forward
     target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_facade.arn
   }
 }

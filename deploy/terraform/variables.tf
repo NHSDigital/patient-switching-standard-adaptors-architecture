@@ -9,6 +9,19 @@
 locals {
   ps_db_instance_url = "jdbc:postgresql://${aws_db_instance.ps_db.endpoint}"
   tcp_network_protocol = "TCP"
+  ecs_launch_type_fargate = "FARGATE"
+  ecs_task_network_mode_aws_vpc = "awsvpc"
+  allow_all_cidr_block = "0.0.0.0/0"
+  allow_all_ipv6_cidr_block = "::/0"
+  allow_all_vpc_protocol = "-1"
+  allow_all_vpc_port = 0
+  mq_engine_type = "ActiveMQ"
+  dynamodb_attribute_type_string = "S"
+  health_check_matcher_port_range = "200-499"
+  target_type_ip = "ip"
+  action_type_forward = "forward"
+  iam_role_policy_effect_allow = "Allow"
+  iam_role_policy_resource_all = "*"
 }
 
 variable "GP2GP_AMQP_PASSWORD" {
@@ -506,18 +519,6 @@ variable "memory" {
   default = 8192
 }
 
-variable "ecs_launch_type_fargate" {
-  description = "Fargate launch type for ECS"
-  type = string
-  default = "FARGATE"
-}
-
-variable "ecs_task_network_mode_aws_vpc" {
-  description = "Network mode of AWS VPC for ECS Task"
-  type = string
-  default = "awsvpc"
-}
-
 variable "public_subnet_cidr_blocks" {
   description = "Available CIDR blocks for public subnets"
   type        = list(string)
@@ -560,42 +561,6 @@ variable "vpc_cidr_block" {
   default     = "10.0.0.0/16"
 }
 
-variable "allow_all_cidr_block" {
-  description = "CIDR block to allow all IP addresses"
-  type = string
-  default = "0.0.0.0/0"
-}
-
-variable "allow_all_ipv6_cidr_block" {
-  description = "IPV6 CIDR block to allow all IP addresses"
-  type = string
-  default = "::/0"
-}
-
-variable "tcp_network_protocol" {
-  description = "tcp protocol for VPC"
-  type = string
-  default = "TCP"
-}
-
-variable "allow_all_vpc_protocol" {
-  description = "Allow all protocol for VPC"
-  type = string
-  default = "-1"
-}
-
-variable "allow_all_vpc_port" {
-  description = "Allow all port for VPC"
-  type = number
-  default = 0
-}
-
-variable "mq_engine_type" {
-  description = "Message queue engine type"
-  type = string
-  default = "ActiveMQ"
-}
-
 variable "mq_engine_version" {
   description = "Message queue engine version"
   type = string
@@ -614,80 +579,16 @@ variable "dynamodb_table_hash_key" {
   default = "key"
 }
 
-variable "dynamodb_attribute_type_string" {
-  description = "Attribute type of string for dynamodb table"
-  type = string
-  default = "S"
-}
-
 variable "dynamodb_table_billing_mode" {
   description = "Billing mode for the dynamodb table"
   type = string
   default = "PAY_PER_REQUEST"
 }
 
-variable "lb_health_check_matcher_port_range" {
-  description = "Response codes to use when checking for a healthy responses from health check"
-  type = string
-  default = "200-499"
-}
-
 variable "lb_health_check_poll_interval" {
   description = "Approximate amount of time, in seconds, between health checks"
   type = number
   default = 300
-}
-
-variable "iam_policy_version" {
-  description = "Version for IAM policies"
-  type = string
-  default = "2012-10-17"
-}
-
-variable "iam_statement_assume_role" {
-  description = "Policy statement with the defaults for assume role"
-  type = list(object({
-    Action = string
-    Effect = string
-    Sid = string
-    Principal = object({
-      Service = string
-    })
-  }))
-  default = [
-    {
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Sid    = ""
-      Principal = {
-        Service = "ecs-tasks.amazonaws.com"
-      }
-    }
-  ]
-}
-
-variable "iam_role_policy_effect_allow" {
-  description = "IAM role policy effect for allow"
-  type = string
-  default = "Allow"
-}
-
-variable "iam_role_policy_resource_all" {
-  description = "IWM role policy resource for all"
-  type = string
-  default = "*"
-}
-
-variable "lb_target_type_ip" {
-  description = "Specify IP type when registering targets with this target group"
-  type = string
-  default = "ip"
-}
-
-variable "lb_listener_default_action_type" {
-  description =  "Type of routing action"
-  type = string
-  default = "forward"
 }
 
 variable "cloudwatch_log_stream_name" {

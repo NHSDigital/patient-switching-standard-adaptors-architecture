@@ -52,6 +52,6 @@ resource "aws_dynamodb_table" "ps_adaptors_tf_locks" {
 
   attribute {
     name = "LockID"
-    type = var.dynamodb_attribute_type_string
+    type = local.dynamodb_attribute_type_string
   }
 }

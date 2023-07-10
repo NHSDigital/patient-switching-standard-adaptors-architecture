@@ -151,20 +151,20 @@ resource "aws_ecs_cluster" "gp2gp_ps" {
 resource "aws_ecs_task_definition" "gp2gp_ps_task" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.adaptor_execution.arn
-  requires_compatibilities = [var.ecs_launch_type_fargate]
+  requires_compatibilities = [local.ecs_launch_type_fargate]
   cpu                      = var.cpu
   memory                   = var.memory
-  network_mode             = var.ecs_task_network_mode_aws_vpc
+  network_mode             = local.ecs_task_network_mode_aws_vpc
   container_definitions    = data.template_file.gp2gp_ps_task_template.rendered
   family                   = "gp2gp_ps"
 }
 
 resource "aws_ecs_task_definition" "gp2gp_ps_db_migration" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
-  requires_compatibilities = [var.ecs_launch_type_fargate]
+  requires_compatibilities = [local.ecs_launch_type_fargate]
   cpu                      = var.cpu
   memory                   = var.memory
-  network_mode             = var.ecs_task_network_mode_aws_vpc
+  network_mode             = local.ecs_task_network_mode_aws_vpc
   container_definitions    = data.template_file.ps_db_migration.rendered
   family                   = "ps_db_migration"
 }
@@ -175,7 +175,7 @@ resource "aws_ecs_service" "gp2gp_ps" {
   task_definition = aws_ecs_task_definition.gp2gp_ps_task.arn
   desired_count   = 1
   depends_on      = [aws_lb_listener.mhs_inbound, aws_iam_role.ecs_task_execution_role, aws_db_instance.ps_db]
-  launch_type     = var.ecs_launch_type_fargate
+  launch_type     = local.ecs_launch_type_fargate
 
 
   network_configuration {
@@ -210,7 +210,7 @@ resource "aws_ecs_service" "ps_db_migration" {
   task_definition = aws_ecs_task_definition.gp2gp_ps_db_migration.arn
   desired_count   = 1
   depends_on      = [aws_iam_role.ecs_task_execution_role, aws_db_instance.ps_db]
-  launch_type     = var.ecs_launch_type_fargate
+  launch_type     = local.ecs_launch_type_fargate
 
   network_configuration {
     subnets = [for subnet in aws_subnet.nia_gp2gp_public_subnet : subnet.id]
