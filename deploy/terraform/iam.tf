@@ -21,7 +21,7 @@ resource "aws_iam_role" "ecs_task_execution_role" {
 resource "aws_iam_role_policy" "ecs_task_execution_role_policy" {
   name = "gp2gp_ps_ecs_execution_policy"
   role = aws_iam_role.ecs_task_execution_role.id
-  policy = data.aws_iam_policy_document.ecs_task_execution
+  policy = data.aws_iam_policy_document.ecs_task_execution.json
 }
 
 resource "aws_iam_role_policy" "ecs_logging_role_policy" {
