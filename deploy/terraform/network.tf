@@ -199,10 +199,10 @@ resource "aws_security_group" "ps_db_sg" {
   vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   ingress {
-    description     = "Allow PS DB traffic"
-    from_port       = var.PS_DB_PORT
-    protocol        = "tcp"
-    to_port         = var.PS_DB_PORT
+    description = "Allow PS DB traffic"
+    from_port   = var.PS_DB_PORT
+    protocol    = "tcp"
+    to_port     = var.PS_DB_PORT
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -245,6 +245,7 @@ resource "aws_lb_target_group" "nia_gp2gp_target_group_inbound" {
 
   health_check {
     enabled  = true
+    port     = var.http_server_port
     interval = 300
     path     = "/healthcheck"
     matcher  = "200-499"
