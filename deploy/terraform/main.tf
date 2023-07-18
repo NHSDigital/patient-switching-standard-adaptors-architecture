@@ -109,7 +109,7 @@ data "template_file" "gp2gp_ps_task_template" {
     STORAGE_REGION = var.STORAGE_REGION
     STORAGE_TYPE = var.STORAGE_TYPE
     SUPPORTED_FILE_TYPES = var.SUPPORTED_FILE_TYPES
-    TCP_PORTS = var.MHS_INBOUND_PORT
+    TCP_PORTS = var.HTTPS_PORT
     MHS_INBOUND_VERSION = var.MHS_INBOUND_VERSION
     MHS_OUTBOUND_VERSION = var.MHS_OUTBOUND_VERSION
     PS_TRANSLATOR_VERSION = var.PS_TRANSLATOR_VERSION
@@ -118,7 +118,7 @@ data "template_file" "gp2gp_ps_task_template" {
     GP2GP_ADAPTOR_VERSION = var.GP2GP_ADAPTOR_VERSION
     GPCC_ADAPTOR_VERSION = var.GPCC_ADAPTOR_VERSION
     MONGODB_VERSION = var.MONGODB_VERSION
-    MHS_INBOUND_PORT = var.MHS_INBOUND_PORT
+    MHS_INBOUND_PORT = var.HTTPS_PORT
     MHS_OUTBOUND_PORT = var.MHS_OUTBOUND_PORT
     MHS_INBOUND_SERVICE_PORTS = var.MHS_INBOUND_SERVICE_PORTS
     PS_DB_PORT = var.PS_DB_PORT
@@ -151,20 +151,20 @@ resource "aws_ecs_cluster" "gp2gp_ps" {
 resource "aws_ecs_task_definition" "gp2gp_ps_task" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.adaptor_execution.arn
-  requires_compatibilities = ["FARGATE"]
+  requires_compatibilities = [local.ecs_launch_type_fargate]
   cpu                      = var.cpu
   memory                   = var.memory
-  network_mode             = "awsvpc"
+  network_mode             = local.ecs_task_network_mode_aws_vpc
   container_definitions    = data.template_file.gp2gp_ps_task_template.rendered
   family                   = "gp2gp_ps"
 }
 
 resource "aws_ecs_task_definition" "gp2gp_ps_db_migration" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
-  requires_compatibilities = ["FARGATE"]
+  requires_compatibilities = [local.ecs_launch_type_fargate]
   cpu                      = var.cpu
   memory                   = var.memory
-  network_mode             = "awsvpc"
+  network_mode             = local.ecs_task_network_mode_aws_vpc
   container_definitions    = data.template_file.ps_db_migration.rendered
   family                   = "ps_db_migration"
 }
@@ -175,7 +175,7 @@ resource "aws_ecs_service" "gp2gp_ps" {
   task_definition = aws_ecs_task_definition.gp2gp_ps_task.arn
   desired_count   = 1
   depends_on      = [aws_lb_listener.mhs_inbound, aws_iam_role.ecs_task_execution_role, aws_db_instance.ps_db]
-  launch_type     = "FARGATE"
+  launch_type     = local.ecs_launch_type_fargate
 
 
   network_configuration {
@@ -194,7 +194,7 @@ resource "aws_ecs_service" "gp2gp_ps" {
   load_balancer {
     target_group_arn = aws_lb_target_group.nia_gp2gp_target_group_inbound.arn
     container_name   = "inbound"
-    container_port   = var.MHS_INBOUND_PORT
+    container_port   = var.HTTPS_PORT
   }
 
   load_balancer {
@@ -210,7 +210,7 @@ resource "aws_ecs_service" "ps_db_migration" {
   task_definition = aws_ecs_task_definition.gp2gp_ps_db_migration.arn
   desired_count   = 1
   depends_on      = [aws_iam_role.ecs_task_execution_role, aws_db_instance.ps_db]
-  launch_type     = "FARGATE"
+  launch_type     = local.ecs_launch_type_fargate
 
   network_configuration {
     subnets = [for subnet in aws_subnet.nia_gp2gp_public_subnet : subnet.id]
