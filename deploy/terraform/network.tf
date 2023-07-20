@@ -109,9 +109,9 @@ resource "aws_security_group" "nia_gp2gp_dmz" {
 
   //ACCEPT TRAFFIC TO MHS INBOUND PORT
   ingress {
-    from_port = var.HTTPS_PORT
-    protocol  = local.tcp_network_protocol
-    to_port   = var.HTTPS_PORT
+    from_port   = var.HTTPS_PORT
+    protocol    = local.tcp_network_protocol
+    to_port     = var.HTTPS_PORT
     cidr_blocks = [local.allow_all_cidr_block]
     description = "Inbound Traffic"
   }
@@ -153,9 +153,9 @@ resource "aws_security_group" "nia_gp2gp_private" {
 
   egress {
     //allow all
-    from_port   = local.allow_all_vpc_port
-    to_port     = local.allow_all_vpc_port
-    protocol    = local.allow_all_vpc_protocol
+    from_port        = local.allow_all_vpc_port
+    to_port          = local.allow_all_vpc_port
+    protocol         = local.allow_all_vpc_protocol
     cidr_blocks      = [local.allow_all_cidr_block]
     ipv6_cidr_blocks = [local.allow_all_ipv6_cidr_block]
   }
@@ -200,11 +200,10 @@ resource "aws_security_group" "ps_db_sg" {
   vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   ingress {
-    description     = "Allow PS DB traffic"
-    from_port       = var.PS_DB_PORT
-    protocol        = local.tcp_network_protocol
-    to_port         = var.PS_DB_PORT
-    security_groups = [aws_security_group.nia_gp2gp_dmz.id]
+    description = "Allow PS DB traffic"
+    from_port   = var.PS_DB_PORT
+    protocol    = local.tcp_network_protocol
+    to_port     = var.PS_DB_PORT
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -240,52 +239,53 @@ resource "aws_lb" "nia_gp2gp_elb" {
 }
 
 resource "aws_lb_target_group" "nia_gp2gp_target_group_inbound" {
-  target_type  = local.target_type_ip
-  port = var.HTTPS_PORT
-  protocol = local.tcp_network_protocol
-  vpc_id = aws_vpc.nia_gp2gp_vpc.id
+  target_type = local.target_type_ip
+  port        = var.HTTPS_PORT
+  protocol    = local.tcp_network_protocol
+  vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   health_check {
-    enabled = true
+    enabled  = true
+    port     = var.http_server_port
     interval = var.lb_health_check_poll_interval
-    path = "/healthcheck"
-    matcher = local.health_check_matcher_port_range
+    path     = "/healthcheck"
+    matcher  = local.health_check_matcher_port_range
   }
 }
 
 resource "aws_lb_target_group" "nia_gp2gp_target_group_spine" {
-  target_type  = local.target_type_ip
-  port = var.MOCK_SPINE_PORT
-  protocol = local.tcp_network_protocol
-  vpc_id = aws_vpc.nia_gp2gp_vpc.id
+  target_type = local.target_type_ip
+  port        = var.MOCK_SPINE_PORT
+  protocol    = local.tcp_network_protocol
+  vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   health_check {
-    enabled = true
+    enabled  = true
     interval = var.lb_health_check_poll_interval
-    path = "/"
-    matcher = local.health_check_matcher_port_range
+    path     = "/"
+    matcher  = local.health_check_matcher_port_range
   }
 }
 
 resource "aws_lb_target_group" "nia_gp2gp_target_group_facade" {
-  target_type  = local.target_type_ip
-  port = var.FACADE_SERVER_PORT
-  protocol = local.tcp_network_protocol
-  vpc_id = aws_vpc.nia_gp2gp_vpc.id
+  target_type = local.target_type_ip
+  port        = var.FACADE_SERVER_PORT
+  protocol    = local.tcp_network_protocol
+  vpc_id      = aws_vpc.nia_gp2gp_vpc.id
 
   health_check {
-    enabled = true
+    enabled  = true
     interval = var.lb_health_check_poll_interval
-    path = "/"
-    matcher = local.health_check_matcher_port_range
+    path     = "/"
+    matcher  = local.health_check_matcher_port_range
   }
 }
 
 resource "aws_lb_listener" "mhs_inbound" {
   load_balancer_arn = aws_lb.nia_gp2gp_elb.arn
 
-  port           = var.HTTPS_PORT
-  protocol       = local.tcp_network_protocol
+  port     = var.HTTPS_PORT
+  protocol = local.tcp_network_protocol
 
   default_action {
     type             = local.action_type_forward
@@ -295,9 +295,9 @@ resource "aws_lb_listener" "mhs_inbound" {
 
 resource "aws_lb_listener" "mock_spine" {
   load_balancer_arn = aws_lb.nia_gp2gp_elb.arn
-  
-  port              = var.MOCK_SPINE_PORT
-  protocol          = local.tcp_network_protocol
+
+  port     = var.MOCK_SPINE_PORT
+  protocol = local.tcp_network_protocol
 
   default_action {
     type             = local.action_type_forward
@@ -308,8 +308,8 @@ resource "aws_lb_listener" "mock_spine" {
 resource "aws_lb_listener" "facade" {
   load_balancer_arn = aws_lb.nia_gp2gp_elb.arn
 
-  port              = var.FACADE_SERVER_PORT
-  protocol          = local.tcp_network_protocol
+  port     = var.FACADE_SERVER_PORT
+  protocol = local.tcp_network_protocol
 
   default_action {
     type             = local.action_type_forward
