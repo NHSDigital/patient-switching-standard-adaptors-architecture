@@ -564,7 +564,7 @@ variable "vpc_cidr_block" {
 variable "mq_engine_version" {
   description = "Message queue engine version"
   type = string
-  default = "5.16.3"
+  default = "5.16.7"
 }
 
 variable "mq_host_type" {

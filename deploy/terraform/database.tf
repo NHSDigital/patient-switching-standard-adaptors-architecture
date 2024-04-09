@@ -9,7 +9,7 @@ resource "aws_db_instance" "ps_db" {
   identifier        = "ps-db"
   allocated_storage = 10
   engine            = "postgres"
-  engine_version    = "14.7"
+  engine_version    = "14.10"
   instance_class    = "db.t3.micro"
   username          = "postgres"
   password          = var.POSTGRES_PASSWORD
